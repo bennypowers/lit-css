@@ -8,7 +8,7 @@ on:
 jobs:
   release:
     # Prevents changesets action from creating a PR on forks
-    if: github.repository == 'bennypowers/rocket-presets'
+    if: github.repository == 'bennypowers/lit-css'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
