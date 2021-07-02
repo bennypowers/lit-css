@@ -1,0 +1,32 @@
+{
+  "name": "@pwrs/lit-css",
+  "description": "Import CSS files as css tagged-template literals",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "lit-css.js",
+  "types": "lit-css.d.ts",
+  "exports": {
+    "import": "./lit-css.js",
+    "require": "./lit-css.cjs"
+  },
+  "author": "Benny Powers",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bennypowers/lit-css.git",
+    "directory": "packages/lit-css"
+  },
+  "bugs": {
+    "url": "https://github.com/bennypowers/lit-css/issues"
+  },
+  "keywords": [ "lit", "web-components", "css" ],
+  "files": [
+    "lit-css.cjs.js",
+    "lit-css.js",
+    "lit-css.d.ts"
+  ],
+  "dependencies": {
+    "string-to-template-literal": "^2.0.0",
+    "uglifycss": "^0.0.29"
+  }
+}

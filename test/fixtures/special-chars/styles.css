@@ -1,0 +1,6 @@
+@import '../specialChars';
+
+/** `😀` */
+html {
+  display: block;
+}

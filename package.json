@@ -1,0 +1,55 @@
+{
+  "name": "root",
+  "private": true,
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Monorepo for lit-css build plugins",
+  "author": "Benny Powers <web@bennypowers.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bennypowers/lit-css.git"
+  },
+  "scripts": {
+    "build": "yarn clean && run-p build:*",
+    "build:runtime": "node build.js",
+    "build:types": "tsc",
+    "test": "yarn build:runtime && esm-tape-runner 'test/*/*.test.js' | tap-spec",
+    "clean": "rimraf 'packages/*/*.{cjs,js,d.ts,js.map,cjs.map}'"
+  },
+  "workspaces": [
+    "packages/*",
+    "test"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/preset-env": "^7.14.2",
+    "@microsoft/fast-element": "^1.4.0",
+    "@pwrs/eslint-config": "^0.0.21",
+    "@rollup/plugin-alias": "^3.1.0",
+    "@small-tech/esm-tape-runner": "^1.0.3",
+    "@types/uglifycss": "0.0.6",
+    "arraybuffer-to-string": "^1.0.2",
+    "babel-jest": "^27.0.6",
+    "cross-env": "^7.0.3",
+    "cz-conventional-changelog": "^3.1.0",
+    "esbuild": "^0.12.14",
+    "esbuild-plugin-alias": "^0.1.2",
+    "esm": "^3.2.0",
+    "globby": "^11.0.4",
+    "jest": "^27.0.6",
+    "lit": "^2.0.0-rc.2",
+    "lit-element": "^2.0.0",
+    "memfs": "^3.2.2",
+    "nodemon": "^2.0.3",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^2.52.7",
+    "rollup-plugin-alias": "^2.2.0",
+    "semantic-release": "^17.0.1",
+    "tap-spec": "^5.0.0",
+    "tap-summary": "^4.0.0",
+    "tape": "^5.2.2",
+    "typescript": "^4.3.5",
+    "webpack": "^5.37.1"
+  }
+}

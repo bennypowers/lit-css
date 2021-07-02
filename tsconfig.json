@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "target": "es2020",
+    "module": "es2020",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "moduleResolution": "Node",
+    "baseUrl": ".",
+    "paths": {
+      "@pwrs/*": ["packages/*"]
+    }
+  }
+}

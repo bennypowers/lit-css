@@ -1,0 +1,7 @@
+{
+  "extends": "@pwrs",
+  "env": { "node": true },
+  "rules": {
+    "no-invalid-this": "off"
+  }
+}

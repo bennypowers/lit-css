@@ -1,0 +1,32 @@
+{
+  "name": "lit-css-loader",
+  "description": "Import CSS files as tagged template literals",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "lit-css-loader.js",
+  "types": "lit-css-loader.d.ts",
+  "exports": {
+    "import": "./lit-css-loader.js",
+    "require": "./lit-css-loader.cjs"
+  },
+  "author": "Benny Powers",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bennypowers/lit-css.git",
+    "directory": "packages/lit-css-loader"
+  },
+  "bugs": {
+    "url": "https://github.com/bennypowers/lit-css/issues"
+  },
+  "keywords": [ "webpack", "loader", "webcomponents", "css", "lit" ],
+  "files": [
+    "lit-css-loader.cjs.js",
+    "lit-css-loader.js",
+    "lit-css-loader.d.ts"
+  ],
+  "dependencies": {
+    "@pwrs/lit-css": "^1.0.0",
+    "loader-utils": "^2.0.0"
+  }
+}
