@@ -24,6 +24,7 @@
   "devDependencies": {
     "@babel/core": "^7.14.3",
     "@babel/preset-env": "^7.14.2",
+    "@changesets/cli": "^2.16.0",
     "@microsoft/fast-element": "^1.4.0",
     "@pwrs/eslint-config": "^0.0.21",
     "@rollup/plugin-alias": "^3.1.0",
