@@ -1,6 +1,0 @@
----
-"lit-css-loader": major
----
-
-`import` option renamed to `specifier`
-`uglify` option added
