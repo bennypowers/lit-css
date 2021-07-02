@@ -6,46 +6,43 @@ import { readFile } from 'fs/promises';
 export async function run({ name, dir, getCode }) {
   const read = path => readFile(resolve(dir, 'expected', path), 'utf8');
 
-  test(`[${name}] generates a basic style`, async function(assert) {
-    const code = await getCode('basic/input.js');
-    const expected = await read('basic/output.js');
-    assert.equal(code, expected);
-    assert.end();
-  });
+  test(name, async function(assert) {
+    assert.equal(
+      await getCode('basic/input.js'),
+      await read('basic/output.js'),
+      'generates a basic style',
+    );
 
-  test(`[${name}] handles special chars in CSS`, async function(assert) {
-    const code = await getCode('special-chars/input.js');
-    const expected = await read('special-chars/output.js');
-    assert.equal(code, expected);
-    assert.end();
-  });
+    assert.equal(
+      await getCode('special-chars/input.js'),
+      await read('special-chars/output.js'),
+      'handles special chars in CSS',
+    );
 
-  test(`[${name}] generates an uglified style`, async function(assert) {
-    const code = await getCode('basic/input.js', { options: { uglify: true } });
-    const expected = await read('basic/uglified.js');
-    assert.equal(code, expected);
-    assert.end();
-  });
+    assert.equal(
+      await getCode('basic/input.js', { options: { uglify: true } }),
+      await read('basic/uglified.js'),
+      'generates an uglified style',
+    );
 
-  test(`[${name}] imports \`css\` from @microsoft/fast-element`, async function(assert) {
-    const specifier = '@microsoft/fast-element';
-    const code = await getCode('basic/input.js', { options: { specifier } });
-    const expected = await read('basic/fast.js');
-    assert.equal(code, expected);
-    assert.end();
-  });
+    assert.equal(
+      await getCode('basic/input.js', { options: { specifier: '@microsoft/fast-element' } }),
+      await read('basic/fast.js'),
+      'imports \`css\` from @microsoft/fast-element',
+    );
 
-  test(`[${name}] imports from a bare specifier`, async function(assert) {
-    const code = await getCode('bare/input.js', { alias: { 'styles/styles.css': './styles.css' } });
-    const expected = await read('bare/output.js');
-    assert.equal(code, expected);
-    assert.end();
-  });
+    assert.equal(
+      await getCode('bare/input.js', { alias: { 'styles/styles.css': './styles.css' } }),
+      await read('bare/output.js'),
+      'imports from a bare specifier',
+    );
 
-  test(`[${name}] imports boop from snoot`, async function(assert) {
-    const code = await getCode('basic/input.js', { options: { specifier: 'snoot', tag: 'boop' } });
-    const expected = await read('basic/boop.js');
-    assert.equal(code, expected);
+    assert.equal(
+      await getCode('basic/input.js', { options: { specifier: 'snoot', tag: 'boop' } }),
+      await read('basic/boop.js'),
+      'imports boop from snoot',
+    );
+
     assert.end();
   });
 }
