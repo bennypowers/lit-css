@@ -1,6 +1,5 @@
 ---
-"lit-css-loader": major
+"rollup-plugin-lit-css": major
 ---
 
 `import` option renamed to `specifier`
-`uglify` option added
