@@ -1,6 +1,6 @@
 import type { Plugin } from 'esbuild';
 
-import { transform, Options } from '@pwrs/lit-css';
+import { transform, Options } from '@pwrs/lit-css/lit-css';
 import { readFile } from 'fs/promises';
 
 export interface LitCSSOptions extends Options {
