@@ -1,5 +1,6 @@
 import type { LoaderContext } from 'webpack';
-import { transform, Options } from '@pwrs/lit-css/lit-css';
+import type { Options } from '@pwrs/lit-css/lit-css';
+import { transform } from '@pwrs/lit-css';
 
 export type LitCSSOptions = Omit<Options, 'css'>;
 

@@ -1,7 +1,8 @@
 import type { Plugin } from 'rollup';
+import type { Options } from '@pwrs/lit-css/lit-css';
 
 import { createFilter } from 'rollup-pluginutils';
-import { transform, Options } from '@pwrs/lit-css/lit-css';
+import { transform } from '@pwrs/lit-css';
 import { resolve } from 'path';
 
 export interface LitCSSOptions extends Options {
