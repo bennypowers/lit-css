@@ -13,7 +13,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/benny-powers/lit-css.git",
+    "url": "git+ssh://git@github.com/bennypowers/lit-css.git",
     "directory": "packages/esbuild-plugin-lit-css"
   },
   "bugs": {
