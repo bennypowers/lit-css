@@ -1,5 +1,14 @@
 # test
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies [de52d50]
+  - esbuild-plugin-lit-css@1.0.2
+  - lit-css-loader@1.0.1
+  - rollup-plugin-lit-css@3.0.1
+
 ## 1.0.2
 
 ### Patch Changes

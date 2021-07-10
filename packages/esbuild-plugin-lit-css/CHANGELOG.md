@@ -1,5 +1,13 @@
 # esbuild-plugin-lit-css
 
+## 1.0.2
+
+### Patch Changes
+
+- de52d50: Fix a good-old-npm-package-files-field error, `.cjs` files should now appear in package tarballs
+- Updated dependencies [de52d50]
+  - @pwrs/lit-css@1.0.1
+
 ## 1.0.1
 
 ### Patch Changes
