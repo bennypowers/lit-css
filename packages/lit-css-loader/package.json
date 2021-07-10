@@ -27,7 +27,7 @@
     "lit"
   ],
   "files": [
-    "lit-css-loader.cjs.js",
+    "lit-css-loader.cjs",
     "lit-css-loader.js",
     "lit-css-loader.d.ts"
   ],

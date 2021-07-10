@@ -25,7 +25,7 @@
     "css"
   ],
   "files": [
-    "lit-css.cjs.js",
+    "lit-css.cjs",
     "lit-css.js",
     "lit-css.d.ts"
   ],

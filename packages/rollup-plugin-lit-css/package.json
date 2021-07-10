@@ -26,7 +26,7 @@
     "rollup"
   ],
   "files": [
-    "rollup-plugin-lit-css.cjs.js",
+    "rollup-plugin-lit-css.cjs",
     "rollup-plugin-lit-css.js",
     "rollup-plugin-lit-css.d.ts"
   ],

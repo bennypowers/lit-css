@@ -27,7 +27,7 @@
     "webcomponents"
   ],
   "files": [
-    "esbuild-plugin-lit-css.cjs.js",
+    "esbuild-plugin-lit-css.cjs",
     "esbuild-plugin-lit-css.js",
     "esbuild-plugin-lit-css.d.ts"
   ],
