@@ -21,7 +21,7 @@ Hopefully this package will become quickly obsolete when the [CSS Modules Propos
 
 In the mean time, enjoy importing your CSS into your component files.
 
-- [Shared Logic](./lit-css)
-- [esbuild](./esbuild-plugin-lit-css)
-- [Webpack](./lit-css-loader)
-- [Rollup](./rollup-plugin-lit-css)
+- [Shared Logic](./packages/lit-css)
+- [esbuild](./packages/esbuild-plugin-lit-css)
+- [Webpack](./packages/lit-css-loader)
+- [Rollup](./packages/rollup-plugin-lit-css)
