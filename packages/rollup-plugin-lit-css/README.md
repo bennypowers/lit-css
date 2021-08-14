@@ -95,3 +95,19 @@ class CSSinCSS extends FASTElement {}
 
 Looking for webpack? [lit-css-loader](../lit-css-loader)
 Looking for esbuild? [esbuild-plugin-lit-css](../esbuild-plugin-lit-css)
+
+## Upgrade from version `2.x`
+
+Starting with version `3.x`, the default import used when transforming the CSS files is `lit` (see `specifier` option above) which is LitElement 3.x. If you need this package to work with [LitElement 2.x](https://lit-element.polymer-project.org/), you have to set the specifier to `lit-element` like so:
+
+```js
+import config from './rollup.config.rest.js'
+import litcss from 'rollup-plugin-lit-css';
+
+export default {
+  ...config,
+  plugins: [
+    litcss({ specifier: 'lit-element' })
+  ]
+}
+```
