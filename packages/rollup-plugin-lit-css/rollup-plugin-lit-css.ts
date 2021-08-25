@@ -5,7 +5,7 @@ import { createFilter } from 'rollup-pluginutils';
 import { transform } from '@pwrs/lit-css';
 import { resolve } from 'path';
 
-export interface LitCSSOptions extends Options {
+export interface LitCSSOptions extends Omit<Options, 'css'> {
   include?: RegExp | string[];
   exclude?: RegExp | string[];
 }

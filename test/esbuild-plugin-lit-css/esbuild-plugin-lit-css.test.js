@@ -9,6 +9,10 @@ import { rollup } from 'rollup';
 import { run } from '../test.js';
 import ab2str from 'arraybuffer-to-string';
 
+function typeCheck() {
+  litCssPlugin({ filter: /hi/ });
+}
+
 const dir = dirname(fileURLToPath(import.meta.url));
 
 async function getCode(path, { options, alias } = {}) {

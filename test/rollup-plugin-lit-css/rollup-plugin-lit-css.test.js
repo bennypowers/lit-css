@@ -9,6 +9,11 @@ import { run } from '../test.js';
 
 const dir = dirname(fileURLToPath(import.meta.url));
 
+export function typeCheck() {
+  litcss({ include: ['*'] });
+  litcss({ exclude: ['*'] });
+}
+
 async function getCode(path, { options, alias } = {}) {
   const additionalPlugins = [...alias ? [aliasPlugin({ entries: alias })] : []]
   const input = resolve(dir, '..', 'fixtures', path);
