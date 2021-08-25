@@ -3,7 +3,7 @@ import type { Options } from '@pwrs/lit-css/lit-css';
 import { transform } from '@pwrs/lit-css';
 import { readFile } from 'fs/promises';
 
-export interface LitCSSOptions extends Options {
+export interface LitCSSOptions extends Omit<Options, 'css'> {
   filter: RegExp;
 }
 
