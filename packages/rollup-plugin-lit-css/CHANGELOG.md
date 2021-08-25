@@ -1,5 +1,11 @@
 # rollup-plugin-lit-css
 
+## 3.0.2
+
+### Patch Changes
+
+- 4e346e2: Fixed typings for plugin options
+
 ## 3.0.1
 
 ### Patch Changes

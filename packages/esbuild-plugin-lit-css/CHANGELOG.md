@@ -1,5 +1,11 @@
 # esbuild-plugin-lit-css
 
+## 1.0.3
+
+### Patch Changes
+
+- 4e346e2: Fixed typings for plugin options
+
 ## 1.0.2
 
 ### Patch Changes
