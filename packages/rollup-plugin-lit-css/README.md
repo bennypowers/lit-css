@@ -30,6 +30,7 @@ In the mean time, enjoy importing your CSS into your component files.
 | `uglify`    | Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options. | `false`        |
 | `specifier` | Package to import `css` from                                                           | `lit`          |
 | `tag`       | Name of the template-tag function                                                      | `css`          |
+| `transform` | Optional function (sync or async) which transforms css sources (e.g. postcss)    | `x => x`       |
 
 ## Usage
 
@@ -104,7 +105,7 @@ To load scss files:
 ```js
 // rollup.config.js
 import litcss from 'rollup-plugin-lit-css';
-import { renderSync } from 'node-sass';
+import { renderSync } from 'sass';
 
 export default {
   plugins: [

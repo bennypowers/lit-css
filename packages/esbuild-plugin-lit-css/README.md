@@ -23,12 +23,13 @@ In the mean time, enjoy importing your CSS into your component files.
 
 ## Options
 
-|Name|Accepts|Default|
-|-----|-----|-----|
-|`filter`|RegExp of file names to apply to|`/\.css$/i`|
-|`uglify`|Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options.|`false`|
-|`specifier`|Package to import `css` from|`lit`|
-|`tag`|Name of the template-tag function|`css`|
+| Name        | Accepts                                                                                | Default     |
+| ----------- | -------------------------------------------------------------------------------------- | ----------- |
+| `filter`    | RegExp of file names to apply to                                                       | `/\.css$/i` |
+| `uglify`    | Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options. | `false`     |
+| `specifier` | Package to import `css` from                                                           | `lit`       |
+| `tag`       | Name of the template-tag function                                                      | `css`       |
+| `transform` | Optional function (sync or async) which transforms css sources (e.g. postcss)          | `x => x`    |
 
 ## Usage
 
@@ -73,7 +74,6 @@ class CSSInCSS extends LitElement {
 }
 ```
 
-
 ### Usage with FAST
 
 ```js
@@ -96,14 +96,14 @@ class CSSinCSS extends FASTElement {}
 ### Usage with Sass, Less, PostCSS, etc.
 
 To load scss files:
-1. Specify the [`js` loader in your esbuild config](https://esbuild.github.io/api/#loader) for `.scss` files,
-2. Specify the `filter` option to `litCssPlugin` to include scss files
-2. Define a `transform` function in the plugin options.
+1\. Specify the [`js` loader in your esbuild config](https://esbuild.github.io/api/#loader) for `.scss` files,
+2\. Specify the `filter` option to `litCssPlugin` to include scss files
+2\. Define a `transform` function in the plugin options.
 
 ```js
 // esbuild script
 import esbuild from 'esbuild';
-import { renderSync } from 'node-sass';
+import { renderSync } from 'sass';
 
 await esbuild.build({
   entryPoints: [/*...*/],

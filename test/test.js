@@ -3,7 +3,7 @@ import test from 'tape';
 
 import postcss from 'postcss';
 import postcssNesting from 'postcss-nesting';
-import { renderSync } from 'node-sass';
+import { renderSync } from 'sass';
 
 import { resolve } from 'path';
 import { readFile } from 'fs/promises';
