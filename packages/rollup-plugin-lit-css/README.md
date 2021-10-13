@@ -99,8 +99,9 @@ Looking for esbuild? [esbuild-plugin-lit-css](../esbuild-plugin-lit-css)
 ### Usage with Sass, Less, PostCSS, etc.
 
 To load scss files:
-2\. Specify an `include` option which includes scss files (i.e. a glob or regexp)
-2\. Define a `transform` function in the plugin options.
+
+1. Specify an `include` option which includes scss files (i.e. a glob or regexp)
+1. Define a `transform` function in the plugin options.
 
 ```js
 // rollup.config.js
