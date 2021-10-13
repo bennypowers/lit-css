@@ -1,4 +1,5 @@
 # rollup-plugin-lit-css
+
 Rollup plugin to import css files as JavaScript tagged-template literal objects.
 
 > _The "Lit" stands for "Literal"_
@@ -22,13 +23,13 @@ In the mean time, enjoy importing your CSS into your component files.
 
 ## Options
 
-|Name|Accepts|Default|
-|-----|-----|-----|
-|`include`|Array of glob of files to include.|`['**/*.css']`|
-|`exclude`|Array of glob of files to exclude. |`undefined`|
-|`uglify`|Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options.|`false`|
-|`specifier`|Package to import `css` from|`lit`|
-|`tag`|Name of the template-tag function|`css`|
+| Name        | Accepts                                                                                | Default        |
+| ----------- | -------------------------------------------------------------------------------------- | -------------- |
+| `include`   | Array of glob of files to include.                                                     | `['**/*.css']` |
+| `exclude`   | Array of glob of files to exclude.                                                     | `undefined`    |
+| `uglify`    | Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options. | `false`        |
+| `specifier` | Package to import `css` from                                                           | `lit`          |
+| `tag`       | Name of the template-tag function                                                      | `css`          |
 
 ## Usage
 
@@ -57,22 +58,20 @@ h1 {
 ```
 
 ```ts
-import { LitElement, customElement, html } from 'lit-element';
+import { LitElement, html } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 import style from './css-in-css.css';
 
 @customElement('css-in-css')
 class CSSInCSS extends LitElement {
-  static get styles() {
-    return [style];
-  }
+  static readonly styles = [style];
 
   render() {
     return html`<h1>It's Lit!</h1>`;
   }
 }
 ```
-
 
 ### Usage with FAST
 
@@ -95,6 +94,46 @@ class CSSinCSS extends FASTElement {}
 
 Looking for webpack? [lit-css-loader](../lit-css-loader)
 Looking for esbuild? [esbuild-plugin-lit-css](../esbuild-plugin-lit-css)
+
+### Usage with Sass, Less, PostCSS, etc.
+
+To load scss files:
+2\. Specify an `include` option which includes scss files (i.e. a glob or regexp)
+2\. Define a `transform` function in the plugin options.
+
+```js
+// rollup.config.js
+import litcss from 'rollup-plugin-lit-css';
+import { renderSync } from 'node-sass';
+
+export default {
+  plugins: [
+    litcss({
+      include: '/**/*.scss',
+      transform: data => renderSync({ data }).css.toString(),
+    }),
+  ]
+}
+```
+
+Similarly, to transform sources using PostCSS, specify a `transform` function:
+
+```js
+// rollup.config.js
+import litcss from 'rollup-plugin-lit-css';
+import postcss from 'postcss';
+import postcssNesting from 'postcss-nesting';
+
+const processor = postcss(postcssNesting());
+
+export default {
+  plugins: [
+    litcss({
+      transform: css => processor.process(css).css,
+    }),
+  ]
+}
+```
 
 ## Upgrade from version `2.x`
 

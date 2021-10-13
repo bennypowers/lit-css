@@ -93,5 +93,50 @@ const template = html<CSSinCSS>`<h1>It's Lit!</h1>`;
 class CSSinCSS extends FASTElement {}
 ```
 
+### Usage with Sass, Less, PostCSS, etc.
+
+To load scss files:
+1. Specify the [`js` loader in your esbuild config](https://esbuild.github.io/api/#loader) for `.scss` files,
+2. Specify the `filter` option to `litCssPlugin` to include scss files
+2. Define a `transform` function in the plugin options.
+
+```js
+// esbuild script
+import esbuild from 'esbuild';
+import { renderSync } from 'node-sass';
+
+await esbuild.build({
+  entryPoints: [/*...*/],
+  loader: {
+    '.scss': 'js'
+  },
+  plugins: [
+    litCssPlugin({
+      filter: /.scss$/,
+      transform: data => renderSync({ data }).css.toString(),
+    }),
+  ]
+});
+```
+
+Similarly, to transform sources using PostCSS, specify a `transform` function:
+
+```js
+import esbuild from 'esbuild';
+import postcss from 'postcss';
+import postcssNesting from 'postcss-nesting';
+
+const processor = postcss(postcssNesting());
+
+await esbuild.build({
+  entryPoints: [/*...*/],
+  plugins: [
+    litCssPlugin({
+      transform: css => processor.process(css).css,
+    }),
+  ]
+});
+```
+
 Looking for webpack? [lit-css-loader](../lit-css-loader)
 Looking for rollup? [rollup-plugin-lit-css](../rollup-plugin-lit-css)

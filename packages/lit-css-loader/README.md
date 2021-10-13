@@ -23,19 +23,17 @@ In the mean time, enjoy importing your CSS into your component files.
 
 ## Options
 
-|Name|Accepts|Default|
-|-----|-----|-----|
-|`include`|Array of glob of files to include.|`['**/*.css']`|
-|`exclude`|Array of glob of files to exclude. |`undefined`|
-|`uglify`|Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options.|`false`|
-|`specifier`|Package to import `css` from|`lit`|
-|`tag`|Name of the template-tag function|`css`|
+| Name        | Accepts                                                                                | Default        |
+| ----------- | -------------------------------------------------------------------------------------- | -------------- |
+| `include`   | Array of glob of files to include.                                                     | `['**/*.css']` |
+| `exclude`   | Array of glob of files to exclude.                                                     | `undefined`    |
+| `uglify`    | Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options. | `false`        |
+| `specifier` | Package to import `css` from                                                           | `lit`          |
+| `tag`       | Name of the template-tag function                                                      | `css`          |
 
 ## Usage
 
-```
-npm i -D lit-css-loader
-```
+    npm i -D lit-css-loader
 
 ```js
 module: {
@@ -44,7 +42,7 @@ module: {
       test: /\.css$/,
       loader: 'lit-css-loader',
       options: {
-        import: 'lit' // defaults to lit-element
+        specifier: 'lit-element' // defaults to `lit`
       }
     }
   ]
@@ -52,15 +50,63 @@ module: {
 ```
 
 ```js
-import { LitElement, html, customElement } from 'lit-element'
+import { LitElement, html } from 'lit';
+import { customElemtn } from 'lit/decorators.js';
 
-import style from './styled-el.css'
+import style from './styled-el.css';
 
 @customElement('styled-el')
 export class extends LitElement {
   static styles = [style]
   render() {
-    return html`<p>such style. very win</p>`
+    return html`<p>such style. very win</p>`;
+  }
+}
+```
+
+### Usage with Sass, Less, PostCSS, etc.
+
+To load scss files:
+
+1.  Adjust the `test` clause of the module rule as needed (e.g)
+2.  Pass a `transform` function to the loader options
+
+```js
+const Sass = require('node-sass');
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        loader: 'lit-css-loader',
+        options: {
+          transform: data => Sass.renderSync({ data }).css.toString(),
+        }
+      }
+    ]
+  }
+}
+```
+
+Similarly, to transform sources using PostCSS, specify a `transform` function:
+
+```js
+const postcss = require('postcss');
+const postcssNesting = require('postcss-nesting');
+
+const processor = postcss(postcssNesting());
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        loader: 'lit-css-loader',
+        options: {
+          transform: css => processor.process(css).css;
+        }
+      }
+    ]
   }
 }
 ```

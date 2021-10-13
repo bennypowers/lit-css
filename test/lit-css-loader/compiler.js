@@ -12,7 +12,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  * @param  {string} fixture
  * @param  {import('../../packages/lit-css-loader/lit-css-loader').LitCSSOptions} [options={}]
  */
-export const compiler = (path, options = {}) => {
+export const compiler = (path, options = {}, { test = /\.css$/i } = {}) => {
   const compiler = webpack({
     mode: 'development',
     context: resolve(__dirname, '..', 'fixtures'),
@@ -29,7 +29,7 @@ export const compiler = (path, options = {}) => {
     module: {
       rules: [
         {
-          test: /\.css$/i,
+          test,
           loader: 'lit-css-loader',
           options,
         },
