@@ -52,7 +52,7 @@ module: {
 
 ```js
 import { LitElement, html } from 'lit';
-import { customElemtn } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 
 import style from './styled-el.css';
 
