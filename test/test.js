@@ -3,7 +3,7 @@ import test from 'tape';
 
 import postcss from 'postcss';
 import postcssNesting from 'postcss-nesting';
-import { renderSync } from 'sass';
+import Sass from 'sass';
 
 import { resolve } from 'path';
 import { readFile } from 'fs/promises';
@@ -52,11 +52,6 @@ export async function run({ name, dir, getCode }) {
 
     assert.equal(
       await getCode('scss/input.js', {
-        esbuildOptions: {
-          loader: {
-            '.scss': 'js',
-          },
-        },
         webpackOptions: {
           test: /\.scss$/,
         },
@@ -64,7 +59,7 @@ export async function run({ name, dir, getCode }) {
           include: '/**/*.scss', // for rollup
           filter: /\.scss$/, // for esbuild
           uglify: true,
-          transform: data => renderSync({ data }).css.toString(),
+          transform: data => Sass.renderSync({ data }).css.toString(),
         },
       }),
       await read('scss/output.js'),

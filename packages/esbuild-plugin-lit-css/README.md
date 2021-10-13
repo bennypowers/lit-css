@@ -97,7 +97,6 @@ class CSSinCSS extends FASTElement {}
 
 To load scss files:
 
-1. Specify the [`js` loader in your esbuild config](https://esbuild.github.io/api/#loader) for `.scss` files,
 1. Specify the `filter` option to `litCssPlugin` to include scss files
 1. Define a `transform` function in the plugin options.
 
@@ -108,9 +107,6 @@ import { renderSync } from 'sass';
 
 await esbuild.build({
   entryPoints: [/*...*/],
-  loader: {
-    '.scss': 'js'
-  },
   plugins: [
     litCssPlugin({
       filter: /.scss$/,
