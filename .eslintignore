@@ -1,1 +1,6 @@
 test/*/expected/**/*.js
+packages/*/*.js
+packages/*/*.cjs
+packages/*/*.js.map
+packages/*/*.cjs.map
+packages/*/*.d.ts

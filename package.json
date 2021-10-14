@@ -18,6 +18,7 @@
     "build": "yarn clean && run-p build:*",
     "build:runtime": "node build.js",
     "build:types": "tsc",
+    "lint": "eslint .",
     "test": "yarn build:runtime && esm-tape-runner 'test/*/*.test.js' | tap-spec",
     "release": "yarn build && yarn test && yarn changeset publish",
     "clean": "rimraf 'packages/*/*.{cjs,js,d.ts,js.map,cjs.map}'"
