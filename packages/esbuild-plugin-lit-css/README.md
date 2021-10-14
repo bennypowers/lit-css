@@ -23,12 +23,13 @@ In the mean time, enjoy importing your CSS into your component files.
 
 ## Options
 
-|Name|Accepts|Default|
-|-----|-----|-----|
-|`filter`|RegExp of file names to apply to|`/\.css$/i`|
-|`uglify`|Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options.|`false`|
-|`specifier`|Package to import `css` from|`lit`|
-|`tag`|Name of the template-tag function|`css`|
+| Name        | Accepts                                                                                | Default     |
+| ----------- | -------------------------------------------------------------------------------------- | ----------- |
+| `filter`    | RegExp of file names to apply to                                                       | `/\.css$/i` |
+| `uglify`    | Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options. | `false`     |
+| `specifier` | Package to import `css` from                                                           | `lit`       |
+| `tag`       | Name of the template-tag function                                                      | `css`       |
+| `transform` | Optional function (sync or async) which transforms css sources (e.g. postcss)          | `x => x`    |
 
 ## Usage
 
@@ -73,7 +74,6 @@ class CSSInCSS extends LitElement {
 }
 ```
 
-
 ### Usage with FAST
 
 ```js
@@ -91,6 +91,48 @@ const template = html<CSSinCSS>`<h1>It's Lit!</h1>`;
 
 @customElement({ name: 'css-in-css', template, styles })
 class CSSinCSS extends FASTElement {}
+```
+
+### Usage with Sass, Less, PostCSS, etc.
+
+To load scss files:
+
+1. Specify the `filter` option to `litCssPlugin` to include scss files
+1. Define a `transform` function in the plugin options.
+
+```js
+// esbuild script
+import esbuild from 'esbuild';
+import { renderSync } from 'sass';
+
+await esbuild.build({
+  entryPoints: [/*...*/],
+  plugins: [
+    litCssPlugin({
+      filter: /.scss$/,
+      transform: data => renderSync({ data }).css.toString(),
+    }),
+  ]
+});
+```
+
+Similarly, to transform sources using PostCSS, specify a `transform` function:
+
+```js
+import esbuild from 'esbuild';
+import postcss from 'postcss';
+import postcssNesting from 'postcss-nesting';
+
+const processor = postcss(postcssNesting());
+
+await esbuild.build({
+  entryPoints: [/*...*/],
+  plugins: [
+    litCssPlugin({
+      transform: css => processor.process(css).css,
+    }),
+  ]
+});
 ```
 
 Looking for webpack? [lit-css-loader](../lit-css-loader)

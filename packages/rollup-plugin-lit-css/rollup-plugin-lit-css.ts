@@ -17,6 +17,7 @@ export function litCss(options?: LitCSSOptions): Plugin {
     uglify,
     specifier,
     tag,
+    ...rest
   } = options ?? {};
 
   const filter = createFilter(include, exclude);
@@ -29,10 +30,9 @@ export function litCss(options?: LitCSSOptions): Plugin {
       return null;
     },
 
-    transform(css, id) {
-      if (id.slice(-4) !== '.css') return null;
+    async transform(css, id) {
       if (!filter(id)) return null;
-      const code = transform({ css, specifier, tag, uglify });
+      const code = await transform({ css, specifier, tag, uglify, ...rest });
       return { code, map: { mappings: '' } };
     },
   };

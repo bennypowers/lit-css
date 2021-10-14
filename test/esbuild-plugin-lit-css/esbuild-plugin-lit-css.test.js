@@ -4,7 +4,6 @@ import aliasPlugin from 'esbuild-plugin-alias'
 
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
-import { rollup } from 'rollup';
 
 import { run } from '../test.js';
 import ab2str from 'arraybuffer-to-string';
@@ -15,7 +14,7 @@ function typeCheck() {
 
 const dir = dirname(fileURLToPath(import.meta.url));
 
-async function getCode(path, { options, alias } = {}) {
+async function getCode(path, { options, alias, esbuildOptions } = {}) {
   const additionalPlugins = [...alias ? [
     aliasPlugin(Object.fromEntries(Object.entries(alias).map(([k, v]) => [k, resolve(dir, '..', 'fixtures', 'bare', v)])))
   ] : []]
@@ -27,6 +26,7 @@ async function getCode(path, { options, alias } = {}) {
     external: ['snoot', 'lit', '@microsoft/fast-element'],
     bundle: true,
     write: false,
+    ...esbuildOptions,
     plugins: [
       litCssPlugin(options),
       ...additionalPlugins

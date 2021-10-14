@@ -20,14 +20,22 @@ export interface Options {
    * @default false
    */
   uglify?: boolean|UglifyCSSOptions;
+  /**
+   * Transform sources using tools like sass or postcss
+   * @param  source         Source file e.g. scss or postcss sources
+   * @return                Transformed, standard CSS
+   */
+  transform?(source: string): string|Promise<string>;
 }
 
-export function transform({
-  css,
+export async function transform({
+  css: source,
   specifier = 'lit',
   tag = 'css',
   uglify = false,
-}: Options): string {
+  transform = x => x,
+}: Options): Promise<string> {
+  const css = await transform(source);
   const uglifyOptions = typeof uglify === 'object' ? uglify : undefined;
   const cssContent = !uglify ? css : processString(css, uglifyOptions);
   return `import {${tag}} from '${specifier}';
