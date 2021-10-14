@@ -15,11 +15,11 @@ export function typeCheck() {
 }
 
 async function getCode(path, { options, alias } = {}) {
-  const additionalPlugins = [...alias ? [aliasPlugin({ entries: alias })] : []]
+  const additionalPlugins = [...alias ? [aliasPlugin({ entries: alias })] : []];
   const input = resolve(dir, '..', 'fixtures', path);
-  const bundle = await rollup({ input, plugins: [litcss(options),...additionalPlugins] });
+  const bundle = await rollup({ input, plugins: [litcss(options), ...additionalPlugins] });
   const { output: [{ code }] } = await bundle.generate({ format: 'es' });
   return code;
 }
 
-run({ name: 'rollup-plugin-lit-css', getCode, dir })
+run({ name: 'rollup-plugin-lit-css', getCode, dir });

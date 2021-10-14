@@ -1,6 +1,6 @@
 /* eslint-disable easy-loops/easy-loops */
 import esbuild from 'esbuild';
-import globby from 'globby';
+import { globby } from 'globby';
 import { readFile } from 'fs/promises';
 import { dirname, resolve } from 'path';
 
