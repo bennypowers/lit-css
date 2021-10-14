@@ -5,5 +5,4 @@ const styles = css`html {
 }
 `;
 
-export default styles;
-export { styles };
+export { styles as default, styles };

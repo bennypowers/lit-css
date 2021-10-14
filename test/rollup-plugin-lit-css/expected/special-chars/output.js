@@ -8,5 +8,4 @@ html {
 }
 `;
 
-export default styles;
-export { styles };
+export { styles as default, styles };
