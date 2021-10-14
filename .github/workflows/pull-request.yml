@@ -1,0 +1,28 @@
+
+name: Verify PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  release:
+    # Prevents changesets action from creating a PR on forks
+    if: github.repository == 'bennypowers/lit-css'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          cache: yarn
+          node-version: 16
+
+      - name: Install packages
+        run: sudo yarn --frozen-lockfile
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Test
+        run: yarn test
