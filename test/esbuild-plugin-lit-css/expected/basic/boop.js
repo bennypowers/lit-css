@@ -1,4 +1,4 @@
-// test/fixtures/basic/styles.css
+// test/😁-FIXTURES/basic/styles.css
 import { boop } from "snoot";
 var styles = boop`html {
   display: block;

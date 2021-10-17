@@ -9,23 +9,32 @@ import { createFsFromVolume, Volume } from 'memfs';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
- * @param  {string} fixture
+ * @param  {object} fixture
  * @param  {import('../../packages/lit-css-loader/lit-css-loader').LitCSSOptions} [options={}]
  */
-export const compiler = (path, options = {}, { test = /\.css$/i } = {}) => {
+export const compiler = ({
+  input: path,
+  test = /\.css$/,
+  alias,
+  options = {},
+}) => {
   const compiler = webpack({
     mode: 'development',
-    context: resolve(__dirname, '..', 'fixtures'),
+    context: resolve(__dirname, '..', '😁-FIXTURES'),
     entry: `./${path}`,
     output: {
       path: resolve(__dirname),
       filename: 'bundle.js',
     },
-    externals: { snoot: 'snoot' },
+    externals: {
+      'lit': 'lit',
+      '@microsoft/fast-element': 'fast',
+      'snoot': 'snoot',
+    },
     optimization: {
       minimize: false,
     },
-    ...!!options.alias && { resolve: { alias: options.alias } },
+    ...!!alias && { resolve: { alias } },
     module: {
       rules: [
         {
@@ -42,9 +51,12 @@ export const compiler = (path, options = {}, { test = /\.css$/i } = {}) => {
 
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
-      if (err) reject(err);
-      if (stats.hasErrors()) reject(stats.toJson().errors);
-      resolve(stats);
+      if (err)
+        return reject(err);
+      else if (stats.hasErrors())
+        return reject(stats.toJson().errors);
+      else
+        return resolve(stats);
     });
   });
 };

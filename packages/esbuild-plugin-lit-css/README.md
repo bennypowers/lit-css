@@ -103,14 +103,16 @@ To load scss files:
 ```js
 // esbuild script
 import esbuild from 'esbuild';
-import { renderSync } from 'sass';
+import Sass from 'sass';
 
 await esbuild.build({
   entryPoints: [/*...*/],
   plugins: [
     litCssPlugin({
       filter: /.scss$/,
-      transform: data => renderSync({ data }).css.toString(),
+      transform: (data, { filePath }) =>
+        Sass.renderSync({ data, file: filePath })
+          .css.toString(),
     }),
   ]
 });
@@ -129,7 +131,9 @@ await esbuild.build({
   entryPoints: [/*...*/],
   plugins: [
     litCssPlugin({
-      transform: css => processor.process(css).css,
+      transform: (css, { filePath }) =>
+        processor.process(css, { from: filePath })
+          .css,
     }),
   ]
 });

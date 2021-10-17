@@ -1,4 +1,4 @@
-// test/fixtures/basic/styles.css
+// test/😁-FIXTURES/basic/styles.css
 import { css } from "@microsoft/fast-element";
 var styles = css`html {
   display: block;

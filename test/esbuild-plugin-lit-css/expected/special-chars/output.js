@@ -1,4 +1,4 @@
-// test/fixtures/special-chars/styles.css
+// test/😁-FIXTURES/special-chars/styles.css
 import { css } from "lit";
 var styles = css`@import '../specialChars';
 

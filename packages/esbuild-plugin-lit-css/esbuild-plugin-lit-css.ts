@@ -15,8 +15,23 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
       const loader = 'js';
       build.onLoad({ filter }, async args => {
         const css = await readFile(args.path, 'utf8');
-        const contents = await transform({ css, specifier, tag, uglify, ...rest });
-        return { contents, loader };
+        const filePath = args.path;
+        try {
+          const contents = await transform({ css, specifier, tag, uglify, filePath, ...rest });
+          return { contents, loader };
+        } catch (error) {
+          return {
+            errors: [{
+              text: error.message,
+              detail: error,
+              location: {
+                file: error.file,
+                line: error.line,
+                column: error.column,
+              },
+            }],
+          };
+        }
       });
     },
   };

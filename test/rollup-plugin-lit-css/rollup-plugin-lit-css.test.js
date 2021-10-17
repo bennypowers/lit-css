@@ -9,17 +9,30 @@ import { run } from '../test.js';
 
 const dir = dirname(fileURLToPath(import.meta.url));
 
-export function typeCheck() {
-  litcss({ include: ['*'] });
-  litcss({ exclude: ['*'] });
-}
+// type check
+litcss({
+  include: ['*'],
+  exclude: ['*'],
+});
 
-async function getCode(path, { options, alias } = {}) {
-  const additionalPlugins = [...alias ? [aliasPlugin({ entries: alias })] : []];
-  const input = resolve(dir, '..', 'fixtures', path);
-  const bundle = await rollup({ input, plugins: [litcss(options), ...additionalPlugins] });
-  const { output: [{ code }] } = await bundle.generate({ format: 'es' });
-  return code;
-}
+run({
+  dir,
+  name: 'rollup-plugin-lit-css',
+  async getCode(path, { options, alias } = {}) {
+    const additionalPlugins = [...alias ? [aliasPlugin({ entries: alias })] : []];
 
-run({ name: 'rollup-plugin-lit-css', getCode, dir });
+    const input = resolve(dir, '..', '😁-FIXTURES', path);
+
+    const bundle = await rollup({
+      input,
+      external: ['lit', '@microsoft/fast-element', 'snoot'],
+      plugins: [
+        litcss(options),
+        ...additionalPlugins,
+      ],
+    });
+
+    const { output: [{ code }] } = await bundle.generate({ format: 'es' });
+    return code;
+  },
+});

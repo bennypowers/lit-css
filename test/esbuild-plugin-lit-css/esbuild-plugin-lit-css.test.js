@@ -13,18 +13,18 @@ litCssPlugin({ filter: /hi/ });
 
 const dir = dirname(fileURLToPath(import.meta.url));
 
-async function getCode(path, { options, alias, esbuildOptions } = {}) {
+async function getCode(path, { options, alias } = {}) {
   const additionalPlugins = [...alias ? [
     aliasPlugin(
       Object.fromEntries(
         Object.entries(alias)
           .map(([k, v]) =>
-            [k, resolve(dir, '..', 'fixtures', 'bare', v)])
+            [k, resolve(dir, '..', '😁-FIXTURES', 'bare', v)])
       )
     ),
   ] : []];
 
-  const input = resolve(dir, '..', 'fixtures', path);
+  const input = resolve(dir, '..', '😁-FIXTURES', path);
   const bundle = await esbuild.build({
     entryPoints: [input],
     target: 'es2020',
@@ -32,7 +32,6 @@ async function getCode(path, { options, alias, esbuildOptions } = {}) {
     external: ['snoot', 'lit', '@microsoft/fast-element'],
     bundle: true,
     write: false,
-    ...esbuildOptions,
     plugins: [
       litCssPlugin(options),
       ...additionalPlugins,

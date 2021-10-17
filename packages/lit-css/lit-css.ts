@@ -5,6 +5,8 @@ import { processString, UglifyCSSOptions } from 'uglifycss';
 export interface Options {
   /** CSS to transform */
   css: string;
+  /** Absolute (i.e. resolved) path to the css file */
+  filePath?: string;
   /**
    * Module specifier that exports the template tag.
    * @default 'lit'
@@ -22,20 +24,22 @@ export interface Options {
   uglify?: boolean|UglifyCSSOptions;
   /**
    * Transform sources using tools like sass or postcss
-   * @param  source         Source file e.g. scss or postcss sources
+   * @param  source         Source file contents e.g. scss or postcss sources
+   * @param  meta           Source file absolute (i.e. resolved) path
    * @return                Transformed, standard CSS
    */
-  transform?(source: string): string|Promise<string>;
+  transform?(source: string, meta?: { filePath: string }): string|Promise<string>;
 }
 
 export async function transform({
   css: source,
+  filePath,
   specifier = 'lit',
   tag = 'css',
   uglify = false,
   transform = x => x,
 }: Options): Promise<string> {
-  const css = await transform(source);
+  const css = await transform(source, { filePath });
   const uglifyOptions = typeof uglify === 'object' ? uglify : undefined;
   const cssContent = !uglify ? css : processString(css, uglifyOptions);
   return `import {${tag}} from '${specifier}';

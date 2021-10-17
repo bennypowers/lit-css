@@ -106,13 +106,15 @@ To load scss files:
 ```js
 // rollup.config.js
 import litcss from 'rollup-plugin-lit-css';
-import { renderSync } from 'sass';
+import Sass from 'sass';
 
 export default {
   plugins: [
     litcss({
       include: '/**/*.scss',
-      transform: data => renderSync({ data }).css.toString(),
+      transform: (data, { filePath }) =>
+        Sass.renderSync({ data, file: filePath })
+          .css.toString(),
     }),
   ]
 }
@@ -131,7 +133,9 @@ const processor = postcss(postcssNesting());
 export default {
   plugins: [
     litcss({
-      transform: css => processor.process(css).css,
+      transform: (css, { filePath }) =>
+        processor.process(css, { from: filePath })
+          .css,
     }),
   ]
 }
