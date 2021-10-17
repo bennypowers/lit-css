@@ -1,5 +1,48 @@
 # Change Log
 
+## 1.2.0
+
+### Minor Changes
+
+- 2b27339: Add a second parameter to the transform function which contains a `filePath` property, for use in error reporting, sourcemaps, etc.
+
+### Patch Changes
+
+- 2b27339: Fix `lit-css-loader` options which previously had to be wrapped in an object under `options.options`
+
+  ### Before
+
+  ```js
+  module: {
+    rules: [{
+      test: /\.css$/,
+      loader: 'lit-css-loader',
+      options: {
+        options: {
+          uglify: true,
+        },
+      },
+    }],
+  },
+  ```
+
+  ### After
+
+  ```js
+  module: {
+    rules: [{
+      test: /\.css$/,
+      loader: 'lit-css-loader',
+      options: {
+        uglify: true,
+      },
+    }],
+  },
+  ```
+
+- Updated dependencies [2b27339]
+  - @pwrs/lit-css@1.2.0
+
 ## 1.1.0
 
 ### Minor Changes
