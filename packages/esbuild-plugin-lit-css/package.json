@@ -1,7 +1,7 @@
 {
   "name": "esbuild-plugin-lit-css",
   "description": "import CSS files as tagged template literals",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "main": "esbuild-plugin-lit-css.js",
   "types": "esbuild-plugin-lit-css.d.ts",
@@ -32,7 +32,7 @@
     "esbuild-plugin-lit-css.d.ts"
   ],
   "dependencies": {
-    "@pwrs/lit-css": "^1.1.0"
+    "@pwrs/lit-css": "^1.2.0"
   },
   "peerDependencies": {
     "esbuild": "^0.12.14"

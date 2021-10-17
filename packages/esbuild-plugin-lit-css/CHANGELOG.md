@@ -1,5 +1,16 @@
 # esbuild-plugin-lit-css
 
+## 1.2.0
+
+### Minor Changes
+
+- 2b27339: Add a second parameter to the transform function which contains a `filePath` property, for use in error reporting, sourcemaps, etc.
+
+### Patch Changes
+
+- Updated dependencies [2b27339]
+  - @pwrs/lit-css@1.2.0
+
 ## 1.1.0
 
 ### Minor Changes
