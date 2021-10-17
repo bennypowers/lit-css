@@ -10,6 +10,17 @@ import { readFile } from 'fs/promises';
 
 const processor = postcss(postcssNesting());
 
+async function sassAsync(data, { filePath }) {
+  return new Promise((resolve, reject) => {
+    Sass.render(({ data, file: filePath }), (exception, result) => {
+      if (exception)
+        reject(exception);
+      else
+        resolve(result.css.toString());
+    });
+  });
+}
+
 export async function run({ name, dir, getCode }) {
   const read = path => readFile(resolve(dir, 'expected', path), 'utf8');
 
@@ -52,19 +63,34 @@ export async function run({ name, dir, getCode }) {
 
     assert.equal(
       await getCode('scss/input.js', {
-        webpackOptions: {
-          test: /\.scss$/,
-        },
         options: {
+          test: /\.scss$/, // for webpack
           include: '/**/*.scss', // for rollup
           filter: /\.scss$/, // for esbuild
           uglify: true,
-          transform: data => Sass.renderSync({ data }).css.toString(),
+          transform: sassAsync,
         },
       }),
       await read('scss/output.js'),
       'transforms scss sources',
     );
+
+    try {
+      await getCode('scss/error.js', {
+        options: {
+          test: /\.scss$/, // for webpack
+          include: '/**/*.scss', // for rollup
+          filter: /\.scss$/, // for esbuild
+          transform: sassAsync,
+        },
+      });
+    } catch (e) {
+      assert.match(
+        e.message,
+        new RegExp(`test/😁-FIXTURES/scss/error.scss 2:12  root stylesheet`),
+        'handles sass errors'
+      );
+    }
 
     assert.equal(
       await getCode('postcss/input.js', {

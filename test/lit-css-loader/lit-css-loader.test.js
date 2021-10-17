@@ -5,11 +5,18 @@ import { run } from '../test.js';
 
 const dir = dirname(fileURLToPath(import.meta.url));
 
-async function getCode(input, options = {}) {
-  const stats = await compiler(input, options, options.webpackOptions)
-    .catch(console.log); // eslint-disable-line no-console
-  const [, { source }] = stats.toJson({ source: true }).modules;
-  return source;
-}
-
-run({ name: 'lit-css-loader', getCode, dir });
+run({
+  dir,
+  name: 'lit-css-loader',
+  async getCode(input, { options = {}, alias } = {}) {
+    const { test, include, filter, ...rest } = options;
+    try {
+      const stats = await compiler({ input, test, alias, options: rest });
+      const [, { source }] = stats.toJson({ source: true }).modules;
+      return source;
+    } catch (e) {
+      const [{ message }] = e;
+      throw new Error(message);
+    }
+  },
+});

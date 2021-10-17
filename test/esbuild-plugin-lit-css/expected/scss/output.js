@@ -1,4 +1,4 @@
-// test/fixtures/scss/styles.scss
+// test/😁-FIXTURES/scss/styles.scss
 import { css } from "lit";
 var styles = css`html{display:block}`;
 var styles_default = styles;

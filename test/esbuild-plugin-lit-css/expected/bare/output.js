@@ -1,4 +1,4 @@
-// test/fixtures/bare/styles.css
+// test/😁-FIXTURES/bare/styles.css
 import { css } from "lit";
 var styles = css`html {
   display: block;

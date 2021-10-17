@@ -32,8 +32,15 @@ export function litCss(options?: LitCSSOptions): Plugin {
 
     async transform(css, id) {
       if (!filter(id)) return null;
-      const code = await transform({ css, specifier, tag, uglify, ...rest });
-      return { code, map: { mappings: '' } };
+      try {
+        const code = await transform({ css, specifier, tag, uglify, filePath: id, ...rest });
+        return { code, map: { mappings: '' } };
+      } catch (error) {
+        this.error(error.message, {
+          column: parseInt(error.column),
+          line: parseInt(error.line),
+        });
+      }
     },
   };
 }

@@ -81,7 +81,9 @@ module.exports = {
         test: /\.scss$/,
         loader: 'lit-css-loader',
         options: {
-          transform: data => Sass.renderSync({ data }).css.toString(),
+          transform: (data, { filePath }) =>
+            Sass.renderSync({ data, file: filePath })
+              .css.toString(),
         }
       }
     ]
@@ -104,7 +106,9 @@ module.exports = {
         test: /\.scss$/,
         loader: 'lit-css-loader',
         options: {
-          transform: css => processor.process(css).css;
+          transform: (css, { filePath }) =>
+            processor.process(css, { from: filePath })
+              .css;
         }
       }
     ]
