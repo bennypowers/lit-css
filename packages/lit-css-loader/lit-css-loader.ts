@@ -6,7 +6,7 @@ export type LitCSSOptions = Omit<Options, 'css'>;
 
 type Context = LoaderContext<LitCSSOptions>;
 
-const loader: LoaderDefinitionFunction = function loader(this: Context, css, map, meta): void {
+const loader: LoaderDefinitionFunction = function loader(this: Context, css): void {
   const callback = this.async();
   const filePath = this.resourcePath;
   const options = this.getOptions();

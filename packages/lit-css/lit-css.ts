@@ -2,6 +2,19 @@ import stringToTemplateLiteral from 'string-to-template-literal';
 
 import { processString, UglifyCSSOptions } from 'uglifycss';
 
+export interface Meta {
+  /**
+   * Path to the source file being transformed
+   * Typically passed to transform functions e.g.
+   * @example
+   * ```js
+   * (data, { filePath }) =>
+   *   Sass.renderSync(data, { file: filePath }).css.toString()
+   * ```
+   */
+  filePath: string;
+}
+
 export interface Options {
   /** CSS to transform */
   css: string;
@@ -28,7 +41,7 @@ export interface Options {
    * @param  meta           Source file absolute (i.e. resolved) path
    * @return                Transformed, standard CSS
    */
-  transform?(source: string, meta?: { filePath: string }): string|Promise<string>;
+  transform?(source: string, meta: Meta): string|Promise<string>;
 }
 
 export async function transform({
