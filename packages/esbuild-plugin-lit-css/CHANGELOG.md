@@ -1,5 +1,11 @@
 # esbuild-plugin-lit-css
 
+## 1.2.2
+
+### Patch Changes
+
+- f3f6ed9: Bump esbuild dependency
+
 ## 1.2.1
 
 ### Patch Changes
