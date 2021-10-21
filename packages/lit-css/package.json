@@ -1,7 +1,7 @@
 {
   "name": "@pwrs/lit-css",
   "description": "Import CSS files as css tagged-template literals",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "type": "module",
   "main": "lit-css.js",
   "types": "lit-css.d.ts",
