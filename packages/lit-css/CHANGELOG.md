@@ -1,5 +1,11 @@
 # @pwrs/lit-css
 
+## 1.2.1
+
+### Patch Changes
+
+- d4ff2ca: Fixed the `transform` function signature's types.
+
 ## 1.2.0
 
 ### Minor Changes
