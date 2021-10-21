@@ -1,5 +1,11 @@
 # rollup-plugin-lit-css
 
+## 3.2.1
+
+### Patch Changes
+
+- 5dec94c: Bump dependency
+
 ## 3.2.0
 
 ### Minor Changes
