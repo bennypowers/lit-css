@@ -32,7 +32,7 @@
     "esbuild-plugin-lit-css.d.ts"
   ],
   "dependencies": {
-    "@pwrs/lit-css": "^1.2.0"
+    "@pwrs/lit-css": "^1.2.1"
   },
   "peerDependencies": {
     "esbuild": "^0.12.14"
