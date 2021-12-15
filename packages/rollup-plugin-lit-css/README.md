@@ -141,6 +141,27 @@ export default {
 }
 ```
 
+### Usage with rollup-plugin-styles
+
+[rollup-plugin-styles](https://github.com/Anidetrix/rollup-plugin-styles) does all the CSS-loading and -transformations in one single plugin (including Sass, PostCss, and so on). It works very well together with `rollup-plugin-lit-css`.
+
+```js
+// rollup.config.js
+import litcss from "rollup-plugin-lit-css";
+import styles from "rollup-plugin-styles";
+
+export default {
+  plugins: [
+    styles({ 
+      mode: "emit" // emit pure CSS, so that litcss can consume it.
+    }),
+
+    // Make sure to list litcss *after* the styles-plugin.
+    litcss(),
+  ]
+};
+```
+
 ## Upgrade from version `2.x`
 
 Starting with version `3.x`, the default import used when transforming the CSS files is `lit` (see `specifier` option above) which is LitElement 3.x. If you need this package to work with [LitElement 2.x](https://lit-element.polymer-project.org/), you have to set the specifier to `lit-element` like so:
