@@ -2,11 +2,11 @@
   "name": "test",
   "private": true,
   "type": "module",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "license": "MIT",
   "dependencies": {
-    "esbuild-plugin-lit-css": "1.2.2",
-    "lit-css-loader": "1.2.1",
+    "esbuild-plugin-lit-css": "1.2.3",
+    "lit-css-loader": "1.2.2",
     "rollup-plugin-lit-css": "3.2.1"
   }
 }
