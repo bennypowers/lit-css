@@ -1,5 +1,14 @@
 # test
 
+## 1.0.9
+
+### Patch Changes
+
+- Updated dependencies [b283405]
+- Updated dependencies [633f84f]
+  - lit-css-loader@1.2.2
+  - esbuild-plugin-lit-css@1.2.3
+
 ## 1.0.8
 
 ### Patch Changes

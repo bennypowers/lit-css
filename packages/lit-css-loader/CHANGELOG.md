@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.2.2
+
+### Patch Changes
+
+- b283405: Update loader-utils dependency
+
 ## 1.2.1
 
 ### Patch Changes
