@@ -108,7 +108,7 @@ module.exports = {
         options: {
           transform: (css, { filePath }) =>
             processor.process(css, { from: filePath })
-              .css;
+              .css
         }
       }
     ]
