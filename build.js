@@ -18,7 +18,16 @@ export async function main() {
       const external = bundle ? ['fs', 'path', 'util'] : [];
       const entryPoints = [resolve(outdir, pkg.main).replace('.js', '.ts')];
       try {
-        await esbuild.build({ bundle, external, entryPoints, format, outfile, sourcemap, target });
+        await esbuild.build({
+          bundle,
+          external,
+          entryPoints,
+          format,
+          outfile,
+          sourcemap,
+          target,
+          platform: 'node',
+        });
       } catch (e) {
         process.exit(1);
       }
