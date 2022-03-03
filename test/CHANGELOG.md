@@ -1,5 +1,12 @@
 # test
 
+## 1.0.10
+
+### Patch Changes
+
+- Updated dependencies [e1450b1]
+  - esbuild-plugin-lit-css@1.2.4
+
 ## 1.0.9
 
 ### Patch Changes
