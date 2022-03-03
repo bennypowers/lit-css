@@ -15,7 +15,7 @@
     "url": "git+https://github.com/bennypowers/lit-css.git"
   },
   "scripts": {
-    "build": "yarn clean && run-p build:*",
+    "build": "yarn clean && run-s build:*",
     "build:runtime": "node build.js",
     "build:types": "tsc",
     "lint": "eslint .",
