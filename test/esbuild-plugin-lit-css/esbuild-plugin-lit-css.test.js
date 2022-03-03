@@ -29,6 +29,7 @@ async function getCode(path, { options, alias } = {}) {
     entryPoints: [input],
     target: 'es2020',
     format: 'esm',
+    platform: 'node',
     external: ['snoot', 'lit', '@microsoft/fast-element'],
     bundle: true,
     write: false,

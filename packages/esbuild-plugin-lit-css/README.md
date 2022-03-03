@@ -34,15 +34,15 @@ In the mean time, enjoy importing your CSS into your component files.
 ## Usage
 
 ```js
-import config from './esbuild.config.rest.js'
-import litcss from 'esbuild-plugin-lit-css';
+import esbuild from 'esbuild';
+import { litCssPlugin } from 'esbuild-plugin-lit-css';
 
-export default {
-  ...config,
+await esbuild.build({
+  ...theRestOfYourConfig,
   plugins: [
-    litcss({ include, exclude, uglify })
-  ]
-}
+    litCssPlugin(),
+  ],
+});
 ```
 
 Then import your CSS:
