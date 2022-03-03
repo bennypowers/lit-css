@@ -1,7 +1,7 @@
 {
   "name": "esbuild-plugin-minify-html-literals",
   "description": "Minify HTML tagged template literals with esbuild",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "esbuild-plugin-minify-html-literals.js",
   "types": "esbuild-plugin-minify-html-literals.d.ts",
