@@ -20,20 +20,16 @@ export function minifyHTMLLiteralsPlugin(options?: Options): Plugin {
       const cache = new Map();
 
       build.onLoad({ filter }, async ({ path }) => {
+        const loader = path.match(/c?tsx?$/) ? 'ts' : 'js';
         const input = await readFile(path, 'utf8');
-
         const cached = cache.get(path);
         if (cached?.source === input)
           return cached.output;
         else {
-          const result = minifyHTMLLiterals(input, minifyOptions);
-
-          const output = !result ? undefined : {
-            contents: `${result.code}\n//# sourceMappingURL=${result.map?.toUrl()}`,
-          };
-
+          const result = minifyHTMLLiterals(input, minifyOptions) ?? undefined;
+          const contents = result && `${result.code}\n//# sourceMappingURL=${result.map?.toUrl()}`;
+          const output = result && { contents, loader };
           cache.set(path, { input, output });
-
           return output;
         }
       });
