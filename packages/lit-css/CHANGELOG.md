@@ -1,5 +1,13 @@
 # @pwrs/lit-css
 
+## 2.0.0
+
+### Major Changes
+
+- 3a53b40: Remove support for older node versions.
+  - ESM packages now require [es2020](https://node.green/#ES2020) support.
+  - lit-css-loader now requires [es2018](https://node.green/#ES2018) support.
+
 ## 1.2.1
 
 ### Patch Changes
