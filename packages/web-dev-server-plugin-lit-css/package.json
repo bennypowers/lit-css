@@ -1,0 +1,37 @@
+{
+  "name": "web-dev-server-plugin-lit-css",
+  "description": "Import CSS files as tagged template literals",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "web-dev-server-plugin-lit-css.js",
+  "types": "web-dev-server-plugin-lit-css.d.ts",
+  "exports": {
+    "import": "./web-dev-server-plugin-lit-css.js",
+    "require": "./web-dev-server-plugin-lit-css.cjs"
+  },
+  "author": "Benny Powers",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bennypowers/lit-css.git",
+    "directory": "packages/web-dev-server-plugin-lit-css"
+  },
+  "bugs": {
+    "url": "https://github.com/bennypowers/lit-css/issues"
+  },
+  "keywords": [
+    "lit",
+    "web-components",
+    "css",
+    "web-dev-server"
+  ],
+  "files": [
+    "web-dev-server-plugin-lit-css.cjs",
+    "web-dev-server-plugin-lit-css.js",
+    "web-dev-server-plugin-lit-css.d.ts"
+  ],
+  "dependencies": {
+    "@web/dev-server-rollup": "^0.3.17",
+    "rollup-plugin-lit-css": "^3.2.1"
+  }
+}
