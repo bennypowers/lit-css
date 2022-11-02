@@ -1,4 +1,5 @@
 test/*/expected/**/*.js
+test/*/native/input.js
 packages/*/*.js
 packages/*/*.cjs
 packages/*/*.js.map
