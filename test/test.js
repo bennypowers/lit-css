@@ -8,8 +8,6 @@ import Sass from 'sass';
 import { resolve } from 'path';
 import { readFile } from 'fs/promises';
 
-import importAssertionsPlugin from 'rollup-plugin-import-assertions';
-
 const processor = postcss(postcssNesting());
 
 async function sassAsync(data, { filePath }) {
