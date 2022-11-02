@@ -54,7 +54,6 @@
     "postcss-nesting": "^10.1.4",
     "rollup": "^2.69.0",
     "rollup-plugin-alias": "^2.2.0",
-    "rollup-plugin-import-assertions": "^0.4.0",
     "sass": "^1.51.0",
     "semantic-release": "^19.0.2",
     "tap-spec": "^5.0.0",
