@@ -32,7 +32,7 @@
     "@babel/preset-env": "^7.17.10",
     "@changesets/cli": "^2.22.0",
     "@microsoft/fast-element": "^1.10.0",
-    "@pwrs/eslint-config": "^0.0.25",
+    "@pwrs/eslint-config": "^0.0.26",
     "@rollup/plugin-alias": "^3.1.9",
     "@types/uglifycss": "0.0.7",
     "@typescript-eslint/eslint-plugin": "^5.42.0",
