@@ -4,6 +4,7 @@ import aliasPlugin from '@rollup/plugin-alias';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { rollup } from 'rollup';
+import { importAssertions } from 'acorn-import-assertions';
 
 import { run } from '../test.js';
 
@@ -26,6 +27,7 @@ run({
     const bundle = await rollup({
       input,
       external: ['lit', '@microsoft/fast-element', 'snoot'],
+      acornInjectPlugins: [importAssertions],
       plugins: [
         litcss(options),
         ...additionalPlugins,

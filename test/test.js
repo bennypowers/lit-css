@@ -8,6 +8,8 @@ import Sass from 'sass';
 import { resolve } from 'path';
 import { readFile } from 'fs/promises';
 
+import importAssertionsPlugin from 'rollup-plugin-import-assertions';
+
 const processor = postcss(postcssNesting());
 
 async function sassAsync(data, { filePath }) {
@@ -35,6 +37,12 @@ export async function run({ name, dir, getCode }) {
       await getCode('special-chars/input.js'),
       await read('special-chars/output.js'),
       'handles special chars in CSS',
+    );
+
+    assert.equal(
+      await getCode('native/input.js', { options: { native: true } }),
+      await read('native/native.js'),
+      'generates a native constructible stylesheet',
     );
 
     assert.equal(

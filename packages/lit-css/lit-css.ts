@@ -42,6 +42,26 @@ export interface Options {
    * @return                Transformed, standard CSS
    */
   transform?(source: string, meta: Meta): string|Promise<string>;
+  /**
+   * When true, lit-css will output a native Constructible Style Sheet object.
+   * `native: true` implies no `tag` and no `specifier`.
+   * In other words, those options are ignored when using native constructors.
+   */
+  native?: boolean;
+}
+
+function constructNative(cssContent: string): string {
+  return `export const sheet = new CSSStyleSheet();
+sheet.replaceSync(\`${cssContent}\`);
+export default sheet;
+`;
+}
+
+function constructTagged(cssContent: string, tag: string, specifier: string) {
+  return `import {${tag}} from '${specifier}';
+export const styles = ${tag}${stringToTemplateLiteral(cssContent)};
+export default styles;
+`;
 }
 
 export async function transform({
@@ -50,13 +70,14 @@ export async function transform({
   specifier = 'lit',
   tag = 'css',
   uglify = false,
+  native = false,
   transform = x => x,
 }: Options): Promise<string> {
   const css = await transform(source, { filePath });
   const uglifyOptions = typeof uglify === 'object' ? uglify : undefined;
   const cssContent = !uglify ? css : processString(css, uglifyOptions);
-  return `import {${tag}} from '${specifier}';
-export const styles = ${tag}${stringToTemplateLiteral(cssContent)};
-export default styles;
-`;
+  if (native)
+    return constructNative(cssContent);
+  else
+    return constructTagged(cssContent, tag, specifier);
 }
