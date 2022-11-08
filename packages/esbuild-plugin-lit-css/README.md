@@ -27,6 +27,7 @@ In the mean time, enjoy importing your CSS into your component files.
 | ----------- | -------------------------------------------------------------------------------------- | ----------- |
 | `filter`    | RegExp of file names to apply to                                                       | `/\.css$/i` |
 | `uglify`    | Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options. | `false`     |
+| `native`    | Boolean switch, when true, plugin constructs a native `CSSStyleSheet` object.          | `false`     |
 | `specifier` | Package to import `css` from                                                           | `lit`       |
 | `tag`       | Name of the template-tag function                                                      | `css`       |
 | `transform` | Optional function (sync or async) which transforms css sources (e.g. postcss)          | `x => x`    |
@@ -67,6 +68,35 @@ class CSSInCSS extends LitElement {
   static get styles() {
     return [style];
   }
+
+  render() {
+    return html`<h1>It's Lit!</h1>`;
+  }
+}
+```
+
+### Native Constructible StyleSheets
+
+If you would like to try the **experimental** native Constructible StyleSheets feature,
+set the `native: true` option. Then this plugin becomes a build-time prollyfill for native CSS modules.
+
+```js
+  plugins: [
+    litCssPlugin({ native: true }),
+  ],
+```
+
+Then be sure to assert your import types in your source files.
+
+```ts
+import { LitElement, html } from 'lit';
+import { customElement } from 'lit/decorators.js';
+
+import style from './css-in-css.css' assert { type: 'css' };
+
+@customElement('css-in-css')
+class CSSInCSS extends LitElement {
+  static readonly styles = [style];
 
   render() {
     return html`<h1>It's Lit!</h1>`;

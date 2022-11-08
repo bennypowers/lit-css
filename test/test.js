@@ -38,6 +38,12 @@ export async function run({ name, dir, getCode }) {
     );
 
     assert.equal(
+      await getCode('native/input.js', { options: { native: true } }),
+      await read('native/native.js'),
+      'generates a native constructible stylesheet',
+    );
+
+    assert.equal(
       await getCode('basic/input.js', { options: { uglify: true } }),
       await read('basic/uglified.js'),
       'generates an uglified style',

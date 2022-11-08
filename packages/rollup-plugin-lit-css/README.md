@@ -27,6 +27,7 @@ In the mean time, enjoy importing your CSS into your component files.
 | ----------- | -------------------------------------------------------------------------------------- | -------------- |
 | `include`   | Array of glob of files to include.                                                     | `['**/*.css']` |
 | `exclude`   | Array of glob of files to exclude.                                                     | `undefined`    |
+| `native`    | Boolean switch, when true, plugin constructs a native `CSSStyleSheet` object.          | `false`        |
 | `uglify`    | Boolean or Object of [uglifycss](https://www.npmjs.com/package/uglifycss#api) options. | `false`        |
 | `specifier` | Package to import `css` from                                                           | `lit`          |
 | `tag`       | Name of the template-tag function                                                      | `css`          |
@@ -73,6 +74,46 @@ class CSSInCSS extends LitElement {
   }
 }
 ```
+
+### Native Constructible StyleSheets
+
+If you would like to try the **experimental** native Constructible StyleSheets feature,
+set the `native: true` option. Then this plugin becomes a build-time prollyfill for native CSS modules.
+You must use the `acorn-import-assertions` acorn plugin, or rollup
+will choke on your import assertions:
+
+```js
+import { importAssertions } from 'acorn-import-assertions';
+import litcss from 'rollup-plugin-lit-css';
+
+export default {
+  // ... other rollup options here ...
+  acornInjectPlugins: [importAssertions],
+  plugins: [
+    litcss({ include: 'components/**/*.css', native: true })
+  ]
+}
+```
+
+Then be sure to assert your import types in your source files.
+
+```ts
+import { LitElement, html } from 'lit';
+import { customElement } from 'lit/decorators.js';
+
+import style from './css-in-css.css' assert { type: 'css' };
+
+@customElement('css-in-css')
+class CSSInCSS extends LitElement {
+  static readonly styles = [style];
+
+  render() {
+    return html`<h1>It's Lit!</h1>`;
+  }
+}
+```
+
+
 
 ### Usage with FAST
 
