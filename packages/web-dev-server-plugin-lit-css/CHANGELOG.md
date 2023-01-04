@@ -1,5 +1,11 @@
 # web-dev-server-plugin-lit-css
 
+## 2.0.1
+
+### Patch Changes
+
+- 184c53d: fix cache bug which required users to restart the server when transformed css files changed
+
 ## 2.0.0
 
 ### Major Changes
