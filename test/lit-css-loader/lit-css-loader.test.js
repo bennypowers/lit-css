@@ -1,6 +1,6 @@
 import { compiler } from './compiler.js';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { run } from '../test.js';
 
 const dir = dirname(fileURLToPath(import.meta.url));

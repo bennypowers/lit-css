@@ -1,7 +1,7 @@
 import type { Plugin } from 'esbuild';
 
 import { minifyHTMLLiterals, DefaultOptions as MinifyOptions } from 'minify-html-literals';
-import { readFile } from 'fs/promises';
+import { readFile } from 'node:fs/promises';
 
 export interface Options extends MinifyOptions {
   /** filter to apply to file paths */

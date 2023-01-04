@@ -2,8 +2,8 @@ import { litCssPlugin } from 'esbuild-plugin-lit-css';
 import esbuild from 'esbuild';
 import aliasPlugin from 'esbuild-plugin-alias';
 
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { run } from '../test.js';
 import ab2str from 'arraybuffer-to-string';

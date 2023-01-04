@@ -34,6 +34,7 @@
     "@microsoft/fast-element": "^1.10.0",
     "@pwrs/eslint-config": "^0.0.26",
     "@rollup/plugin-alias": "^3.1.9",
+    "@types/node": "^18.11.18",
     "@types/uglifycss": "0.0.7",
     "arraybuffer-to-string": "^1.0.2",
     "cross-env": "^7.0.3",
