@@ -37,7 +37,7 @@ export function litCss(options?: LitCSSOptions): Plugin {
           tag,
           uglify,
           filePath: path,
-          ...rest
+          ...rest,
         });
       }
     },
@@ -45,7 +45,7 @@ export function litCss(options?: LitCSSOptions): Plugin {
     resolveMimeType({ path }) {
       if (filter(path))
         return 'js';
-    }
+    },
   };
 }
 
