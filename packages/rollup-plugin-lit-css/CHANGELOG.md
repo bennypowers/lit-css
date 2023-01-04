@@ -1,5 +1,11 @@
 # rollup-plugin-lit-css
 
+## 4.0.1
+
+### Patch Changes
+
+- 9fd6b93: Update dependencies
+
 ## 4.0.0
 
 ### Major Changes

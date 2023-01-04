@@ -1,7 +1,7 @@
 {
   "name": "web-dev-server-plugin-lit-css",
   "description": "Import CSS files as tagged template literals",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "main": "web-dev-server-plugin-lit-css.js",
   "types": "web-dev-server-plugin-lit-css.d.ts",
@@ -33,6 +33,6 @@
   "dependencies": {
     "@rollup/pluginutils": "^5.0.2",
     "@web/dev-server-rollup": "^0.3.17",
-    "rollup-plugin-lit-css": "^4.0.0"
+    "rollup-plugin-lit-css": "^4.0.1"
   }
 }
