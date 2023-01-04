@@ -5,8 +5,8 @@ import postcss from 'postcss';
 import postcssNesting from 'postcss-nesting';
 import Sass from 'sass';
 
-import { resolve } from 'path';
-import { readFile } from 'fs/promises';
+import { resolve } from 'node:path';
+import { readFile } from 'node:fs/promises';
 
 const processor = postcss(postcssNesting());
 

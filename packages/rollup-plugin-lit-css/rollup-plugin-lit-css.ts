@@ -3,7 +3,7 @@ import type { Options } from '@pwrs/lit-css/lit-css';
 
 import { createFilter } from '@rollup/pluginutils';
 import { transform } from '@pwrs/lit-css';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 
 export interface LitCSSOptions extends Omit<Options, 'css'> {
   include?: RegExp | string[];

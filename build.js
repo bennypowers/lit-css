@@ -1,9 +1,9 @@
 /* eslint-disable easy-loops/easy-loops */
 import esbuild from 'esbuild';
 import { globby } from 'globby';
-import { readFile } from 'fs/promises';
-import { dirname, resolve } from 'path';
-import { createRequire } from 'module';
+import { readFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
+import { createRequire } from 'node:module';
 
 const nativeNodeModulesPlugin = {
   name: 'native-node-modules',

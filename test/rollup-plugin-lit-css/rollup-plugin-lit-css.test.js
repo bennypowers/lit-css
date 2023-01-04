@@ -1,8 +1,8 @@
 import litcss from 'rollup-plugin-lit-css';
 import aliasPlugin from '@rollup/plugin-alias';
 
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { rollup } from 'rollup';
 
 import { run } from '../test.js';

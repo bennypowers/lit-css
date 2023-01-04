@@ -1,6 +1,6 @@
 import { minifyHTMLLiteralsPlugin } from 'esbuild-plugin-minify-html-literals';
 
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from 'node:url';
 
 import esbuild from 'esbuild';
 import ab2str from 'arraybuffer-to-string';
