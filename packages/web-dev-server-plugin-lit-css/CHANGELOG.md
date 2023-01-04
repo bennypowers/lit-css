@@ -1,5 +1,13 @@
 # web-dev-server-plugin-lit-css
 
+## 2.0.2
+
+### Patch Changes
+
+- 9fd6b93: Update dependencies
+- Updated dependencies [9fd6b93]
+  - rollup-plugin-lit-css@4.0.1
+
 ## 2.0.1
 
 ### Patch Changes
