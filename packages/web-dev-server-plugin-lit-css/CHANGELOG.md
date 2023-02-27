@@ -1,5 +1,11 @@
 # web-dev-server-plugin-lit-css
 
+## 2.0.3
+
+### Patch Changes
+
+- 3e226c8: Properly invalidate browser cache for transformed CSS files
+
 ## 2.0.2
 
 ### Patch Changes
