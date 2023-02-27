@@ -25,20 +25,23 @@ export function litCss(options?: LitCSSOptions): Plugin {
     name: 'lit-css',
 
     async transform(ctx) {
-      const { path, body } = ctx;
-      if (filter(path)) {
-        // bust the cache
-        ctx.set('Cache-Control', 'no-cache');
-        ctx.set('ETag', Date.now().toString());
-        ctx.set('Last-Modified', new Date().toString());
-        return transform({
-          css: body as string,
+      if (filter(ctx.path)) {
+        const headers = {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          'ETag': Date.now().toString(),
+          'Last-Modified': new Date().toString(),
+          'pragma': 'no-cache',
+          'expires': '0',
+        };
+        const body = await transform({
+          css: ctx.body as string,
           specifier,
           tag,
           uglify,
-          filePath: path,
+          filePath: ctx.path,
           ...rest,
         });
+        return { body, headers, transformCache: false };
       }
     },
 
@@ -50,5 +53,3 @@ export function litCss(options?: LitCSSOptions): Plugin {
 }
 
 export default litCss;
-
-
