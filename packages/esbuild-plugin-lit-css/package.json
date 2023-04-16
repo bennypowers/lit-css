@@ -1,7 +1,7 @@
 {
   "name": "esbuild-plugin-lit-css",
   "description": "import CSS files as tagged template literals",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "main": "esbuild-plugin-lit-css.js",
   "types": "esbuild-plugin-lit-css.d.ts",
