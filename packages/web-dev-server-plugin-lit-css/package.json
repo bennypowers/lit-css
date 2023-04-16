@@ -32,7 +32,7 @@
   ],
   "dependencies": {
     "@rollup/pluginutils": "^5.0.2",
-    "@web/dev-server-rollup": "^0.3.17",
+    "@web/dev-server-rollup": "^0.3.21",
     "rollup-plugin-lit-css": "^4.0.1"
   }
 }
