@@ -1,5 +1,11 @@
 # esbuild-plugin-lit-css
 
+## 2.0.3
+
+### Patch Changes
+
+- 3b79e94: update peerDependencies
+
 ## 2.0.2
 
 ### Patch Changes
