@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.0.1
+
+### Patch Changes
+
+- 24b4c45: update dependencies
+
 ## 2.0.0
 
 ### Major Changes

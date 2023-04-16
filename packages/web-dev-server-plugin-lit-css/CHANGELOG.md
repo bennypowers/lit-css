@@ -1,5 +1,11 @@
 # web-dev-server-plugin-lit-css
 
+## 2.0.4
+
+### Patch Changes
+
+- 24b4c45: update dependencies
+
 ## 2.0.3
 
 ### Patch Changes
