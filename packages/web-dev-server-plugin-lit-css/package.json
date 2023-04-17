@@ -31,8 +31,7 @@
     "web-dev-server-plugin-lit-css.d.ts"
   ],
   "dependencies": {
-    "@rollup/pluginutils": "^5.0.2",
-    "@web/dev-server-rollup": "^0.3.21",
-    "rollup-plugin-lit-css": "^4.0.1"
+    "@pwrs/lit-css": "^2.0.0",
+    "@rollup/pluginutils": "^5.0.2"
   }
 }
