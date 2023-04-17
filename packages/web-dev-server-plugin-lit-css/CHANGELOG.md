@@ -1,5 +1,11 @@
 # web-dev-server-plugin-lit-css
 
+## 2.0.5
+
+### Patch Changes
+
+- 22a22fa: Remove unused dependencies
+
 ## 2.0.4
 
 ### Patch Changes
