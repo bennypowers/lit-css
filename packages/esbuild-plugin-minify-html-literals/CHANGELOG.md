@@ -1,5 +1,11 @@
 # esbuild-plugin-minify-html-literals
 
+## 1.0.5
+
+### Patch Changes
+
+- 9c58c8d: Add support for esbuild 0.18 as a peerDependency
+
 ## 1.0.4
 
 ### Patch Changes

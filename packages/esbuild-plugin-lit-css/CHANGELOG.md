@@ -1,5 +1,11 @@
 # esbuild-plugin-lit-css
 
+## 2.0.4
+
+### Patch Changes
+
+- 9c58c8d: Add support for esbuild 0.18 as a peerDependency
+
 ## 2.0.3
 
 ### Patch Changes
