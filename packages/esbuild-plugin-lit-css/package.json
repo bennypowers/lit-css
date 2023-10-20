@@ -1,40 +1,40 @@
 {
-  "name": "esbuild-plugin-lit-css",
-  "description": "import CSS files as tagged template literals",
-  "version": "2.0.4",
-  "type": "module",
-  "main": "esbuild-plugin-lit-css.js",
-  "types": "esbuild-plugin-lit-css.d.ts",
-  "exports": {
-    "import": "./esbuild-plugin-lit-css.js",
-    "require": "./esbuild-plugin-lit-css.cjs"
-  },
-  "author": "Benny Powers <web@bennypowers.com>",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/bennypowers/lit-css.git",
-    "directory": "packages/esbuild-plugin-lit-css"
-  },
-  "bugs": {
-    "url": "https://github.com/bennypowers/lit-css/issues"
-  },
-  "keywords": [
-    "esbuild",
-    "plugin",
-    "lit",
-    "css",
-    "webcomponents"
-  ],
-  "files": [
-    "esbuild-plugin-lit-css.cjs",
-    "esbuild-plugin-lit-css.js",
-    "esbuild-plugin-lit-css.d.ts"
-  ],
-  "dependencies": {
-    "@pwrs/lit-css": "^2.0.0"
-  },
-  "peerDependencies": {
-    "esbuild": "^0.16.17 || ^0.17.16 || ^0.18.1"
-  }
+	"name": "esbuild-plugin-lit-css",
+	"description": "import CSS files as tagged template literals",
+	"version": "2.0.4",
+	"type": "module",
+	"main": "esbuild-plugin-lit-css.js",
+	"types": "esbuild-plugin-lit-css.d.ts",
+	"exports": {
+		"import": "./esbuild-plugin-lit-css.js",
+		"require": "./esbuild-plugin-lit-css.cjs"
+	},
+	"author": "Benny Powers <web@bennypowers.com>",
+	"license": "ISC",
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/bennypowers/lit-css.git",
+		"directory": "packages/esbuild-plugin-lit-css"
+	},
+	"bugs": {
+		"url": "https://github.com/bennypowers/lit-css/issues"
+	},
+	"keywords": [
+		"esbuild",
+		"plugin",
+		"lit",
+		"css",
+		"webcomponents"
+	],
+	"files": [
+		"esbuild-plugin-lit-css.cjs",
+		"esbuild-plugin-lit-css.js",
+		"esbuild-plugin-lit-css.d.ts"
+	],
+	"dependencies": {
+		"@pwrs/lit-css": "^2.0.0"
+	},
+	"peerDependencies": {
+		"esbuild": "^0.16.17 || ^0.17.16 || ^0.18.1 || ^0.19.5"
+	}
 }
