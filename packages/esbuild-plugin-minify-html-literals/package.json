@@ -1,40 +1,40 @@
 {
-	"name": "esbuild-plugin-minify-html-literals",
-	"description": "Minify HTML tagged template literals with esbuild",
-	"version": "1.0.5",
-	"type": "module",
-	"main": "esbuild-plugin-minify-html-literals.js",
-	"types": "esbuild-plugin-minify-html-literals.d.ts",
-	"exports": {
-		"import": "./esbuild-plugin-minify-html-literals.js",
-		"require": "./esbuild-plugin-minify-html-literals.cjs"
-	},
-	"author": "Benny Powers <web@bennypowers.com>",
-	"license": "ISC",
-	"repository": {
-		"type": "git",
-		"url": "git+ssh://git@github.com/bennypowers/lit-css.git",
-		"directory": "packages/esbuild-plugin-minify-html-literals"
-	},
-	"bugs": {
-		"url": "https://github.com/bennypowers/lit-css/issues"
-	},
-	"keywords": [
-		"esbuild",
-		"plugin",
-		"lit",
-		"css",
-		"webcomponents"
-	],
-	"files": [
-		"esbuild-plugin-minify-html-literals.cjs",
-		"esbuild-plugin-minify-html-literals.js",
-		"esbuild-plugin-minify-html-literals.d.ts"
-	],
-	"dependencies": {
-		"minify-html-literals": "^1.3.5"
-	},
-	"peerDependencies": {
-		"esbuild": "^0.16.17 || ^0.17.16 || ^0.18.1 || ^0.19.5"
-	}
+  "name": "esbuild-plugin-minify-html-literals",
+  "description": "Minify HTML tagged template literals with esbuild",
+  "version": "1.0.5",
+  "type": "module",
+  "main": "esbuild-plugin-minify-html-literals.js",
+  "types": "esbuild-plugin-minify-html-literals.d.ts",
+  "exports": {
+    "import": "./esbuild-plugin-minify-html-literals.js",
+    "require": "./esbuild-plugin-minify-html-literals.cjs"
+  },
+  "author": "Benny Powers <web@bennypowers.com>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/bennypowers/lit-css.git",
+    "directory": "packages/esbuild-plugin-minify-html-literals"
+  },
+  "bugs": {
+    "url": "https://github.com/bennypowers/lit-css/issues"
+  },
+  "keywords": [
+    "esbuild",
+    "plugin",
+    "lit",
+    "css",
+    "webcomponents"
+  ],
+  "files": [
+    "esbuild-plugin-minify-html-literals.cjs",
+    "esbuild-plugin-minify-html-literals.js",
+    "esbuild-plugin-minify-html-literals.d.ts"
+  ],
+  "dependencies": {
+    "minify-html-literals": "^1.3.5"
+  },
+  "peerDependencies": {
+    "esbuild": "^0.16.17 || ^0.17.16 || ^0.18.1 || ^0.19.5"
+  }
 }
