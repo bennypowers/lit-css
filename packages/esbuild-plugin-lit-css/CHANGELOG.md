@@ -1,5 +1,11 @@
 # esbuild-plugin-lit-css
 
+## 2.0.5
+
+### Patch Changes
+
+- c4ebf3a: Update dependencies
+
 ## 2.0.4
 
 ### Patch Changes
