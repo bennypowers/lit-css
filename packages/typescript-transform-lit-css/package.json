@@ -1,0 +1,42 @@
+{
+  "name": "typescript-transform-lit-css",
+  "description": "import CSS files as tagged template literals",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "typescript-transform-lit-css.js",
+  "types": "typescript-transform-lit-css.d.ts",
+  "exports": {
+    "import": "./typescript-transform-lit-css.js",
+    "require": "./typescript-transform-lit-css.cjs"
+  },
+  "author": "Benny Powers <web@bennypowers.com>",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/bennypowers/lit-css.git",
+    "directory": "packages/typescript-transform-lit-css"
+  },
+  "bugs": {
+    "url": "https://github.com/bennypowers/lit-css/issues"
+  },
+  "keywords": [
+    "typescript",
+    "transform",
+    "lit",
+    "css",
+    "webcomponents"
+  ],
+  "files": [
+    "typescript-transform-lit-css.cjs",
+    "typescript-transform-lit-css.js",
+    "typescript-transform-lit-css.d.ts"
+  ],
+  "dependencies": {
+    "@pwrs/lit-css": "^2.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5",
+    "ts-patch": "^3.0",
+    "lit": "^2.7.2 || ^3.0.0"
+  }
+}
