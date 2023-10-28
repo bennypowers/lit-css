@@ -32,6 +32,6 @@
   ],
   "dependencies": {
     "@pwrs/lit-css": "^2.0.0",
-    "@rollup/pluginutils": "^5.0.2"
+    "@rollup/pluginutils": "^5.0.5"
   }
 }
