@@ -118,3 +118,4 @@ module.exports = {
 
 Looking for rollup? [rollup-plugin-lit-css](../rollup-plugin-lit-css)
 Looking for esbuild? [esbuild-plugin-lit-css](../esbuild-plugin-lit-css)
+Looking for typescript? [typescript-transform-lit-css](../typescript-transform-lit-css)

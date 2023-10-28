@@ -1,6 +1,7 @@
-# esbuild-plugin-lit-css
+# typescript-transform-lit-css
 
-ESBuild plugin to import css files as JavaScript tagged-template literal objects.
+TypeScript transformer to import css files as JavaScript tagged-template literal objects.
+Use it with [ts-patch](https://npm.im/ts-patch)
 
 > _The "Lit" stands for "Literal"_
 
@@ -33,16 +34,16 @@ In the mean time, enjoy importing your CSS into your component files.
 
 ## Usage
 
-```js
-import esbuild from 'esbuild';
-import { litCssPlugin } from 'esbuild-plugin-lit-css';
-
-await esbuild.build({
-  ...theRestOfYourConfig,
-  plugins: [
-    litCssPlugin(),
-  ],
-});
+```json5
+{
+  "compilerOptions": {
+    "plugins": [
+      {
+        "transform": "typescript-transform-lit-css",
+      },
+    ]
+  }
+}
 ```
 
 Then import your CSS:
@@ -76,10 +77,17 @@ class CSSInCSS extends LitElement {
 
 ### Usage with FAST
 
-```js
-plugins: [
-  litcss({ specifier: '@microsoft/fast-element' })
-]
+```json5
+{
+  "compilerOptions": {
+    "plugins": [
+      {
+        "transform": "typescript-transform-lit-css",
+        "specifier": "@microsoft/fast-element",
+      },
+    ]
+  }
+}
 ```
 
 ```ts
@@ -93,52 +101,6 @@ const template = html<CSSinCSS>`<h1>It's Lit!</h1>`;
 class CSSinCSS extends FASTElement {}
 ```
 
-### Usage with Sass, Less, PostCSS, etc.
-
-To load scss files:
-
-1. Specify the `filter` option to `litCssPlugin` to include scss files
-1. Define a `transform` function in the plugin options.
-
-```js
-// esbuild script
-import esbuild from 'esbuild';
-import Sass from 'sass';
-
-await esbuild.build({
-  entryPoints: [/*...*/],
-  plugins: [
-    litCssPlugin({
-      filter: /.scss$/,
-      transform: (data, { filePath }) =>
-        Sass.renderSync({ data, file: filePath })
-          .css.toString(),
-    }),
-  ]
-});
-```
-
-Similarly, to transform sources using PostCSS, specify a `transform` function:
-
-```js
-import esbuild from 'esbuild';
-import postcss from 'postcss';
-import postcssNesting from 'postcss-nesting';
-
-const processor = postcss(postcssNesting());
-
-await esbuild.build({
-  entryPoints: [/*...*/],
-  plugins: [
-    litCssPlugin({
-      transform: (css, { filePath }) =>
-        processor.process(css, { from: filePath })
-          .css,
-    }),
-  ]
-});
-```
-
+Looking for esbuild? [esbuild-plugin-lit-css](../esbuild-plugin-lit-css)
 Looking for webpack? [lit-css-loader](../lit-css-loader)
 Looking for rollup? [rollup-plugin-lit-css](../rollup-plugin-lit-css)
-Looking for typescript? [typescript-transform-lit-css](../typescript-transform-lit-css)
