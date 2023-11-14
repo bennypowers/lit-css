@@ -1,0 +1,14 @@
+{
+  "include": [".", "../declaration.d.ts"],
+  "compilerOptions": {
+    "outDir": "../../TSPC_OUTPUT",
+    "module": "NodeNext",
+    "plugins": [
+      {
+        "transform": "typescript-transform-lit-css",
+        "inline": true,
+        "cleanCss": true
+      }
+    ]
+  }
+}

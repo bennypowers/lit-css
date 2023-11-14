@@ -2,10 +2,11 @@ import { litCssPlugin } from 'esbuild-plugin-lit-css';
 import esbuild from 'esbuild';
 import aliasPlugin from 'esbuild-plugin-alias';
 
-import { dirname, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { run } from '../test.js';
+import { run } from '@lit-css/test/test.js';
+
 import ab2str from 'arraybuffer-to-string';
 
 // type check
@@ -13,18 +14,20 @@ litCssPlugin({ filter: /hi/ });
 
 const dir = dirname(fileURLToPath(import.meta.url));
 
+const FIXTURES_DIR = join(dir, '..', '..', '..', 'test', '😁-FIXTURES');
+
 async function getCode(path, { options, alias } = {}) {
   const additionalPlugins = [...alias ? [
     aliasPlugin(
       Object.fromEntries(
         Object.entries(alias)
           .map(([k, v]) =>
-            [k, resolve(dir, '..', '😁-FIXTURES', 'bare', v)])
+            [k, resolve(FIXTURES_DIR, 'bare', v)])
       )
     ),
   ] : []];
 
-  const input = resolve(dir, '..', '😁-FIXTURES', path);
+  const input = resolve(FIXTURES_DIR, path);
   const bundle = await esbuild.build({
     entryPoints: [input],
     target: 'es2020',

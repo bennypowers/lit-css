@@ -1,0 +1,15 @@
+{
+  "include": ["."],
+  "exclude": ["cssnano"],
+  "compilerOptions": {
+    "outDir": "../TSPC_OUTPUT",
+    "module": "NodeNext",
+    "plugins": [
+      {
+        "transform": "typescript-transform-lit-css",
+        "inline": true,
+        "cssnano": false
+      }
+    ]
+  }
+}

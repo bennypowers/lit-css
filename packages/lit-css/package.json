@@ -30,6 +30,7 @@
     "lit-css.d.ts"
   ],
   "dependencies": {
+    "cssnano": "^6.0.1",
     "string-to-template-literal": "^2.0.0",
     "uglifycss": "^0.0.29"
   }

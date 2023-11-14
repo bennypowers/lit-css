@@ -5,12 +5,16 @@ import fs from 'node:fs';
 import { URL, pathToFileURL } from 'node:url';
 
 import CleanCSS from 'clean-css';
+import postcss from 'postcss';
+import nesting from 'postcss-nesting';
 
 import ts, { ImportDeclaration, SourceFile } from 'typescript';
 
 export interface LitCSSOptions extends Pick<Options, 'specifier'|'filePath'|'tag'> {
   filter: string;
+  /** @deprecated */
   uglify: boolean;
+  cssnano: boolean;
   inline: boolean;
 }
 
@@ -82,21 +86,121 @@ function createLitCssTaggedTemplateLiteral(
   );
 }
 
-/**
- * @param {string} stylesheet
- * @param {string} filePath
- */
-function minifyCss(stylesheet: string, filePath: string) {
-  try {
-    const clean = new CleanCSS({ returnPromise: false });
-    const { styles } = clean.minify(stylesheet);
-    return styles;
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.log('Could not minify ', filePath);
-    // eslint-disable-next-line no-console
-    console.error(e);
-    return stylesheet;
+const getProcessedStylesheet = (content: string) => {
+  const post = postcss([nesting]).process(content);
+  const unnested = post.css;
+  return post.css;
+};
+
+const getMinifiedStylesheet = (
+  content: string,
+  pluginConfig: PluginConfig & LitCSSOptions,
+) => {
+  if (pluginConfig.cleanCss || pluginConfig.uglify) {
+    const results = new CleanCSS({ returnPromise: false }).minify(content);
+    return results.styles;
+  } else
+    return content;
+};
+
+function createInline(
+  node: ts.ImportDeclaration | ts.ExportDeclaration,
+  importedStyleSheetSpecifier: string,
+  pluginConfig: PluginConfig & LitCSSOptions,
+  ctx: ts.TransformationContext,
+) {
+  const tagPkgSpecifier = pluginConfig.specifier ?? 'lit';
+  const tag = pluginConfig.tag ?? 'css';
+  const { fileName } = node.getSourceFile();
+  const dir = pathToFileURL(fileName);
+  const url = new URL(importedStyleSheetSpecifier, dir);
+  const content = fs.readFileSync(url, 'utf-8');
+
+  const unnested = getProcessedStylesheet(content);
+  const stylesheet = getMinifiedStylesheet(unnested, pluginConfig);
+
+  const litTagImportStatement =
+    createLitCssImportStatement(ctx, node.getSourceFile(), tagPkgSpecifier, tag);
+
+  if (ts.isImportDeclaration(node)) {
+    const importBinding = node.importClause.name.getText();
+    const literal = createLitCssTaggedTemplateLiteral(ctx, stylesheet, importBinding, tag);
+    return [litTagImportStatement, literal];
+  } else {
+    if (ts.isNamespaceExport(node.exportClause))
+      throw new Error('namespace exports are not supported');
+    else if (ts.isNamedExports(node.exportClause)) {
+      return [
+        litTagImportStatement,
+        createLitCssTaggedTemplateLiteral(ctx, stylesheet, 'styles', tag),
+        ctx.factory.createExportDeclaration(
+          null,
+          false,
+          ctx.factory.createNamedExports(node.exportClause.elements.map(element => {
+            if (element.name.getText() === 'default')
+              return (ctx.factory.createExportSpecifier(false, 'styles', 'default'));
+            else {
+              const propertyName = element.name.getText();
+              const name = element.propertyName?.getText() ?? 'styles';
+              return ctx.factory.createExportSpecifier(false, propertyName, name);
+            }
+          }))
+        ),
+      ];
+    }
+  }
+}
+
+function createModuleDecls(
+  node: ts.ImportDeclaration | ts.ExportDeclaration,
+  ctx: ts.TransformationContext,
+  importedStyleSheetSpecifier: string,
+) {
+  if (ts.isImportDeclaration(node)) {
+    return ctx.factory.createImportDeclaration(
+      node.modifiers,
+      node.importClause,
+      ctx.factory.createStringLiteral(`${importedStyleSheetSpecifier}.js`)
+    );
+  } else if (!ts.isNamedExports(node.exportClause))
+    throw new Error('namespace export unsupported');
+  else {
+    const importDecl = ts.addSyntheticLeadingComment(
+      ctx.factory.createImportDeclaration(
+        node.modifiers,
+        ctx.factory.createImportClause(
+          false,
+          undefined,
+          ctx.factory.createNamedImports(
+            node.exportClause.elements
+              .map(specifier =>
+                ctx.factory.createImportSpecifier(
+                  false,
+                  ctx.factory.createIdentifier(specifier.name.getText()),
+                  ctx.factory.createIdentifier(specifier.name.getText()),
+                ),
+              ),
+          ),
+        ),
+        ctx.factory.createStringLiteral(`${importedStyleSheetSpecifier}.js`),
+      ),
+      ts.SyntaxKind.SingleLineCommentTrivia,
+      'typescript-transform-lit-css',
+    );
+
+    const exportDecl = ctx.factory.createExportDeclaration(
+      [],
+      false,
+      node.exportClause,
+    );
+
+    const newLine = ts.addSyntheticLeadingComment(
+      ctx.factory.createIdentifier('\n'),
+      ts.SyntaxKind.SingleLineCommentTrivia,
+      'end typescript-transform-lit-css',
+    );
+
+    return [importDecl, exportDecl, newLine];
   }
 }
 
@@ -104,45 +208,27 @@ function minifyCss(stylesheet: string, filePath: string) {
  * Replace .css import specifiers with .css.js import specifiers
  */
 export default function(
-  program: ts.Program,
+  _program: ts.Program,
   pluginConfig: PluginConfig & LitCSSOptions,
-  extras: TransformerExtras,
+  { ts }: TransformerExtras,
 ) {
   const tagPkgSpecifier = pluginConfig.specifier ?? 'lit';
   const tag = pluginConfig.tag ?? 'css';
   return (ctx: ts.TransformationContext) => {
     function visitor(node: ts.Node) {
-      if (ts.isImportDeclaration(node) && !node.importClause?.isTypeOnly) {
+      /* eslint-disable operator-linebreak */
+      if (ts.isImportDeclaration(node)
+          && !node.importClause?.isTypeOnly
+          || ts.isExportDeclaration(node)
+      ) {
+      /* eslint-enable operator-linebreak */
         const importedStyleSheetSpecifier =
           node.moduleSpecifier.getText().replace(/^'(.*)'$/, '$1');
         if (importedStyleSheetSpecifier.endsWith('.css')) {
-          if (pluginConfig.inline) {
-            const { fileName } = node.getSourceFile();
-            const dir = pathToFileURL(fileName);
-            const url = new URL(importedStyleSheetSpecifier, dir);
-            const content = fs.readFileSync(url, 'utf-8');
-            const stylesheet = pluginConfig.uglify ? minifyCss(content, url.pathname) : content;
-            return [
-              createLitCssImportStatement(
-                ctx,
-                node.getSourceFile(),
-                tagPkgSpecifier,
-                tag,
-              ),
-              createLitCssTaggedTemplateLiteral(
-                ctx,
-                stylesheet,
-                node.importClause?.name?.getText(),
-                tag,
-              ),
-            ];
-          } else {
-            return ctx.factory.createImportDeclaration(
-              node.modifiers,
-              node.importClause,
-              ctx.factory.createStringLiteral(`${importedStyleSheetSpecifier}.js`)
-            );
-          }
+          if (pluginConfig.inline)
+            return createInline(node, importedStyleSheetSpecifier, pluginConfig, ctx);
+          else
+            return createModuleDecls(node, ctx, importedStyleSheetSpecifier);
         }
       }
       return ts.visitEachChild(node, visitor, ctx);

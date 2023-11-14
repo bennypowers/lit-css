@@ -32,7 +32,7 @@ test('esbuild-plugin-minify-html-literals', async function(assert) {
     ],
   });
 
-  const expected = `// test/esbuild-plugin-minify-html-literals/fixture.js
+  const expected = `// packages/esbuild-plugin-minify-html-literals/test/fixture.js
 import { html } from "lit";
 var tpl = html\`<p>hello, world</p><input type="text"> <button type="button">button</button>\`;
 export {

@@ -1,0 +1,9 @@
+html {
+  display: block;
+  & body {
+    display: flex;
+    &::part(thing) {
+      color: blue;
+    }
+  }
+}
