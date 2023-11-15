@@ -1,13 +1,15 @@
 import litcss from 'rollup-plugin-lit-css';
 import aliasPlugin from '@rollup/plugin-alias';
 
-import { dirname, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { rollup } from 'rollup';
 
-import { run } from '../test.js';
+import { run } from '@lit-css/test/test.js';
 
 const dir = dirname(fileURLToPath(import.meta.url));
+
+const FIXTURES_DIR = join(dir, '..', '..', '..', 'test', '😁-FIXTURES');
 
 // type check
 litcss({
@@ -21,7 +23,7 @@ run({
   async getCode(path, { options, alias } = {}) {
     const additionalPlugins = [...alias ? [aliasPlugin({ entries: alias })] : []];
 
-    const input = resolve(dir, '..', '😁-FIXTURES', path);
+    const input = resolve(FIXTURES_DIR, path);
 
     const bundle = await rollup({
       input,

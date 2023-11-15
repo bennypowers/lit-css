@@ -24,12 +24,13 @@ In the mean time, enjoy importing your CSS into your component files.
 
 ## Options
 
-| Name        | Accepts                                                            | Default |
-| ----------- | ------------------------------------------------------------------ | ------- |
-| `uglify`    | Boolean, whether to minify css.                                    | `false` |
-| `inline`    | Boolean, whether to inline css imports into the typescript source. | `false` |
-| `specifier` | Package to import `css` from                                       | `lit`   |
-| `tag`       | Name of the template-tag function                                  | `css`   |
+| Name                                   | Accepts                                                            | Default |
+| -------------------------------------- | ------------------------------------------------------------------ | ------- |
+| `uglify` (**deprecated**: use cssnano) | Boolean, whether to minify css.                                    | `false` |
+| `cssnano`                              | Boolean, whether to minify css with cssnano.                       | `false` |
+| `inline`                               | Boolean, whether to inline css imports into the typescript source. | `false` |
+| `specifier`                            | Package to import `css` from                                       | `lit`   |
+| `tag`                                  | Name of the template-tag function                                  | `css`   |
 
 ## Usage
 

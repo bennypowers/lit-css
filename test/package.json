@@ -1,7 +1,10 @@
 {
-  "name": "test",
+  "name": "@lit-css/test",
   "private": true,
   "type": "module",
+  "exports": {
+    "./*": "./*"
+  },
   "version": "1.0.10",
   "license": "MIT",
   "dependencies": {

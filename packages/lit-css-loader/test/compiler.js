@@ -8,6 +8,8 @@ import { createFsFromVolume, Volume } from 'memfs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+const FIXTURES_DIR = join(__dirname, '..', '..', '..', 'test', '😁-FIXTURES');
+
 /**
  * @param  {object} fixture
  * @param  {import('../../packages/lit-css-loader/lit-css-loader').LitCSSOptions} [options={}]
@@ -20,7 +22,7 @@ export const compiler = ({
 }) => {
   const compiler = webpack({
     mode: 'development',
-    context: resolve(__dirname, '..', '😁-FIXTURES'),
+    context: FIXTURES_DIR,
     entry: `./${path}`,
     output: {
       path: resolve(__dirname),
