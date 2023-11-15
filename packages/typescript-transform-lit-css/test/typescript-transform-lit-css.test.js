@@ -31,23 +31,23 @@ test('typescript-transform-lit-css', async function(assert) {
   await compile(FIXTURES_DIR);
   await compile(join(FIXTURES_DIR, 'cleanCss'));
 
-  // assert.equal(
-  //   await getCode('default/input.js'),
-  //   await read('default/output.js'),
-  //   'exports a default style import',
-  // );
+  assert.equal(
+    await getCode('default/input.js'),
+    await read('default/output.js'),
+    'exports a default style import',
+  );
 
-  // assert.equal(
-  //   await getCode('named/input.js'),
-  //   await read('named/output.js'),
-  //   'exports a named style import',
-  // );
+  assert.equal(
+    await getCode('named/input.js'),
+    await read('named/output.js'),
+    'exports a named style import',
+  );
 
-  // assert.equal(
-  //   await getCode('element/input.js'),
-  //   await read('element/output.js'),
-  //   'generates a inline style in typical element use',
-  // );
+  assert.equal(
+    await getCode('element/input.js'),
+    await read('element/output.js'),
+    'generates a inline style in typical element use',
+  );
 
   assert.equal(
     await getCode('cleanCss/input.js'),
@@ -55,11 +55,11 @@ test('typescript-transform-lit-css', async function(assert) {
     'generates a inline style in typical element use, minified',
   );
 
-  // assert.equal(
-  //   await getCode('special-chars/input.js'),
-  //   await read('special-chars/output.js'),
-  //   'handles special chars in CSS',
-  // );
+  assert.equal(
+    await getCode('special-chars/input.js'),
+    await read('special-chars/output.js'),
+    'handles special chars in CSS',
+  );
 
   assert.end();
 });
