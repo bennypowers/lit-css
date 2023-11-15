@@ -1,5 +1,16 @@
 # esbuild-plugin-lit-css
 
+## 2.1.0
+
+### Minor Changes
+
+- 08a095f: Add `cssnano` config property, deprecate `uglify` config property.
+
+### Patch Changes
+
+- Updated dependencies [08a095f]
+  - @pwrs/lit-css@2.1.0
+
 ## 2.0.5
 
 ### Patch Changes
