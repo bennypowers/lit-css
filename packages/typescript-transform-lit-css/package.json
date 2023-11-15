@@ -1,7 +1,7 @@
 {
   "name": "typescript-transform-lit-css",
   "description": "import CSS files as tagged template literals",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "main": "typescript-transform-lit-css.js",
   "types": "typescript-transform-lit-css.d.ts",
@@ -32,7 +32,7 @@
     "typescript-transform-lit-css.d.ts"
   ],
   "dependencies": {
-    "@pwrs/lit-css": "^2.0.0"
+    "@pwrs/lit-css": "^2.1.0"
   },
   "peerDependencies": {
     "typescript": "^5",

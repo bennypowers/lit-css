@@ -1,5 +1,11 @@
 # @pwrs/lit-css
 
+## 2.1.0
+
+### Minor Changes
+
+- 08a095f: Add `cssnano` config property, deprecate `uglify` config property.
+
 ## 2.0.0
 
 ### Major Changes
