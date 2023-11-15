@@ -11,6 +11,11 @@
   },
   "author": "Benny Powers <web@bennypowers.com>",
   "license": "ISC",
+  "scripts": {
+    "build": "run-s build:*",
+    "build:esm": "tsc",
+    "build:cjs": "esbuild --format=cjs typescript-transform-lit-css.js --outfile=typescript-transform-lit-css.cjs"
+  },
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/bennypowers/lit-css.git",
@@ -35,6 +40,9 @@
     "@pwrs/lit-css": "^2.1.0"
   },
   "peerDependencies": {
+    "clean-css": "^5",
+    "postcss": "^8",
+    "postcss-nesting": "^12",
     "typescript": "^5",
     "ts-patch": "^3.0",
     "lit": "^2.7.2 || ^3.0.0"

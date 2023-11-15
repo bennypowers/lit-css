@@ -210,9 +210,10 @@ export default function(
   return (ctx: ts.TransformationContext) => {
     function visitor(node: ts.Node) {
       /* eslint-disable operator-linebreak */
-      if (ts.isImportDeclaration(node)
-          && !node.importClause?.isTypeOnly
-          || ts.isExportDeclaration(node)
+      if (!ts.isTypeOnlyImportOrExportDeclaration(node)
+        && (ts.isImportDeclaration(node) || ts.isExportDeclaration(node))
+        // TODO: handle cases like `import { style as foo } from './x.css'; export { foo as bar };`
+        && node.moduleSpecifier
       ) {
       /* eslint-enable operator-linebreak */
         const importedStyleSheetSpecifier =

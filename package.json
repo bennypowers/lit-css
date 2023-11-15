@@ -16,10 +16,11 @@
   },
   "scripts": {
     "build": "npm run clean && run-p build:*",
+    "build:typescript": "npm run build -ws --if-present",
     "build:runtime": "node build.js",
     "build:types": "tsc",
     "lint": "eslint .",
-    "test": "npm run build:runtime && tape 'packages/*/test/*.test.js' | tap-spec",
+    "test": "npm run build && tape 'packages/*/test/*.test.js' | tap-spec",
     "release": "npm run build && npm run test && npx changeset publish",
     "clean": "rimraf 'packages/*/*.{cjs,js,d.ts,js.map,cjs.map}'"
   },
