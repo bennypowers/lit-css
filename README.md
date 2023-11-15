@@ -1,3 +1,5 @@
+![Am Yisrael Chai - עם ישראל חי](https://bennypowers.dev/assets/flag.am.yisrael.chai.png)
+
 # lit-CSS Plugins
 
 Build plugins to import css files as JavaScript tagged-template literal objects.
