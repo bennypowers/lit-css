@@ -1,4 +1,5 @@
 {
+  "exclude": ["./packages/typescript-transform-lit-css/test"],
   "compilerOptions": {
     "declaration": true,
     "emitDeclarationOnly": true,
@@ -14,7 +15,8 @@
       "@pwrs/lit-css/*": ["packages/lit-css/*"],
       "esbuild-plugin-lit-css": ["packages/esbuild-plugin-lit-css/esbuild-plugin-lit-css"],
       "rollup-plugin-lit-css": ["packages/rollup-plugin-lit-css/rollup-plugin-lit-css"],
-      "web-dev-server-plugin-lit-css": ["packages/web-dev-server-plugin-lit-css/web-dev-server-plugin-lit-css"]
+      "web-dev-server-plugin-lit-css": ["packages/web-dev-server-plugin-lit-css/web-dev-server-plugin-lit-css"],
+      "typescript-transform-lit-css": ["packages/typescript-transform-lit-css/typescript-transform-lit-css"]
     }
   }
 }

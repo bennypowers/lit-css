@@ -44,13 +44,26 @@ const nativeNodeModulesPlugin = {
 
 export async function main() {
   for (const pkgPath of await globby('packages/*/package.json')) {
+    if (pkgPath.match(/typescript-transform-lit-css/))
+      continue;
     const outdir = dirname(pkgPath);
     const pkg = JSON.parse(await readFile(pkgPath, 'utf8'));
     for (const [type, filename] of Object.entries(pkg.exports)) {
       try {
         await esbuild.build({
           bundle: type === 'require',
-          external: type === 'require' ? ['fs', 'path', 'util', 'uglify-js', 'fsevents'] : [],
+          external: type === 'require' ? [
+            'fs',
+            'path',
+            'util',
+            'uglify-js',
+            'fsevents',
+            'clean-css',
+            'postcss',
+            'postcss-*',
+            'node:*',
+            '@pwrs/lit-css',
+          ] : [],
           entryPoints: [resolve(outdir, pkg.main).replace('.js', '.ts')],
           format: type === 'import' ? 'esm' : 'cjs',
           outfile: resolve(outdir, filename),

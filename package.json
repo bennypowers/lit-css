@@ -16,6 +16,7 @@
   },
   "scripts": {
     "build": "npm run clean && run-p build:*",
+    "build:typescript": "npm run build -ws --if-present",
     "build:runtime": "node build.js",
     "build:types": "tsc",
     "lint": "eslint .",
