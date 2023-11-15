@@ -86,22 +86,15 @@ function createLitCssTaggedTemplateLiteral(
   );
 }
 
-const getProcessedStylesheet = (content: string) => {
-  const post = postcss([nesting]).process(content);
-  const unnested = post.css;
-  return post.css;
-};
+const getProcessedStylesheet = (content: string) =>
+  postcss([nesting]).process(content).css;
 
 const getMinifiedStylesheet = (
   content: string,
   pluginConfig: PluginConfig & LitCSSOptions,
-) => {
-  if (pluginConfig.cleanCss || pluginConfig.uglify) {
-    const results = new CleanCSS({ returnPromise: false }).minify(content);
-    return results.styles;
-  } else
-    return content;
-};
+) =>
+    !(pluginConfig.cleanCss || pluginConfig.uglify) ? content
+  : new CleanCSS({ returnPromise: false }).minify(content).styles;
 
 function createInline(
   node: ts.ImportDeclaration | ts.ExportDeclaration,

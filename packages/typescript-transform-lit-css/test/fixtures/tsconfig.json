@@ -8,7 +8,7 @@
       {
         "transform": "typescript-transform-lit-css",
         "inline": true,
-        "cssnano": false
+        "cleanCss": true
       }
     ]
   }
