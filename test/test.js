@@ -38,9 +38,9 @@ export async function run({ name, dir, getCode }) {
     );
 
     assert.equal(
-      await getCode('basic/input.js', { options: { uglify: true } }),
+      await getCode('basic/input.js', { options: { cssnano: true } }),
       await read('basic/uglified.js'),
-      'generates an uglified style',
+      'generates a minified style',
     );
 
     assert.equal(
@@ -67,7 +67,7 @@ export async function run({ name, dir, getCode }) {
           test: /\.scss$/, // for webpack
           include: '/**/*.scss', // for rollup
           filter: /\.scss$/, // for esbuild
-          uglify: true,
+          cssnano: true,
           transform: sassAsync,
         },
       }),
@@ -95,7 +95,7 @@ export async function run({ name, dir, getCode }) {
     assert.equal(
       await getCode('postcss/input.js', {
         options: {
-          uglify: true,
+          cssnano: true,
           transform: css => processor.process(css).css,
         },
       }),

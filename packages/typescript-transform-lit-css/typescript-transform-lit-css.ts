@@ -1,22 +1,34 @@
 import type { Options } from '@pwrs/lit-css/lit-css';
 import type { TransformerExtras, PluginConfig } from 'ts-patch';
 
-import fs from 'node:fs';
 import { URL, pathToFileURL } from 'node:url';
+import { readFileSync } from 'node:fs';
 
-import CleanCSS from 'clean-css';
-import postcss from 'postcss';
+import postcss, { type Processor as PostCSSProcessor, type Plugin as PostCSSPlugin } from 'postcss';
 import nesting from 'postcss-nesting';
+import cssnanoPresetDefault from 'cssnano-preset-default';
 
 import ts, { ImportDeclaration, SourceFile } from 'typescript';
 
 export interface LitCSSOptions extends Pick<Options, 'specifier'|'filePath'|'tag'> {
   filter: string;
-  /** @deprecated */
-  uglify: boolean;
   cssnano: boolean;
   inline: boolean;
 }
+
+const isPlugin = (x: PostCSSPlugin|PostCSSProcessor): x is PostCSSPlugin => 'postcssPlugin' in x;
+
+const cssnanoPreset = cssnanoPresetDefault();
+
+const asyncPlugins = [
+  'postcss-svgo',
+  'css-declaration-sorter',
+];
+
+const cssnanoSyncPlugins = cssnanoPreset.plugins
+  // replicate the `initializePlugin` behavior from https://github.com/cssnano/cssnano/blob/a566cc5/packages/cssnano/src/index.js#L8
+  .map(([creator, pluginConfig]) => creator(pluginConfig))
+  .filter(plugin => isPlugin(plugin) && !asyncPlugins.includes(plugin.postcssPlugin));
 
 const SEEN_SOURCES = new WeakSet();
 
@@ -86,15 +98,11 @@ function createLitCssTaggedTemplateLiteral(
   );
 }
 
-const getProcessedStylesheet = (content: string) =>
-  postcss([nesting]).process(content).css;
-
-const getMinifiedStylesheet = (
-  content: string,
-  pluginConfig: PluginConfig & LitCSSOptions,
-) =>
-    !(pluginConfig.cleanCss || pluginConfig.uglify) ? content
-  : new CleanCSS({ returnPromise: false }).minify(content).styles;
+const getProcessedStylesheet = (content: string, pluginConfig: PluginConfig & LitCSSOptions) =>
+  postcss([
+    nesting,
+    ...pluginConfig.cssnano ? cssnanoSyncPlugins : [],
+  ]).process(content).css;
 
 function createInline(
   node: ts.ImportDeclaration | ts.ExportDeclaration,
@@ -107,10 +115,9 @@ function createInline(
   const { fileName } = node.getSourceFile();
   const dir = pathToFileURL(fileName);
   const url = new URL(importedStyleSheetSpecifier, dir);
-  const content = fs.readFileSync(url, 'utf-8');
+  const content = readFileSync(url, 'utf-8');
 
-  const unnested = getProcessedStylesheet(content);
-  const stylesheet = getMinifiedStylesheet(unnested, pluginConfig);
+  const stylesheet = getProcessedStylesheet(content, pluginConfig);
 
   const litTagImportStatement =
     createLitCssImportStatement(ctx, node.getSourceFile(), tagPkgSpecifier, tag);

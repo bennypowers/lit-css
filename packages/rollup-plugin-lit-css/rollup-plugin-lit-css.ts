@@ -14,7 +14,6 @@ export function litCss(options?: LitCSSOptions): Plugin {
   const {
     exclude,
     include = /\.css$/i,
-    uglify,
     specifier,
     tag,
     ...rest
@@ -33,7 +32,7 @@ export function litCss(options?: LitCSSOptions): Plugin {
     async transform(css, id) {
       if (!filter(id)) return null;
       try {
-        const code = await transform({ css, specifier, tag, uglify, filePath: id, ...rest });
+        const code = await transform({ css, specifier, tag, filePath: id, ...rest });
         return { code, map: { mappings: '' } };
       } catch (error) {
         this.error(error.message, {

@@ -13,7 +13,6 @@ export function litCss(options?: LitCSSOptions): Plugin {
   const {
     exclude,
     include = /\.css$/i,
-    uglify,
     specifier,
     tag,
     ...rest
@@ -37,7 +36,6 @@ export function litCss(options?: LitCSSOptions): Plugin {
           css: ctx.body as string,
           specifier,
           tag,
-          uglify,
           filePath: ctx.path,
           ...rest,
         });

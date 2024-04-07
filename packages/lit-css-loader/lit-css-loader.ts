@@ -10,8 +10,8 @@ const loader: LoaderDefinitionFunction = function loader(this: Context, css): vo
   const callback = this.async();
   const filePath = this.resourcePath;
   const options = this.getOptions();
-  const { specifier, tag, uglify, ...rest } = options ?? {};
-  transform({ css, specifier, tag, uglify, filePath, ...rest })
+  const { specifier, tag, ...rest } = options ?? {};
+  transform({ css, specifier, tag, filePath, ...rest })
     .then(result => {
       callback(null, result);
     })

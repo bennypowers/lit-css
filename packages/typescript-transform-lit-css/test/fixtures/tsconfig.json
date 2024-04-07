@@ -1,6 +1,6 @@
 {
   "include": ["."],
-  "exclude": ["cleanCss"],
+  "exclude": ["cssnano"],
   "compilerOptions": {
     "outDir": "../TSPC_OUTPUT",
     "module": "NodeNext",
@@ -8,7 +8,7 @@
       {
         "transform": "typescript-transform-lit-css",
         "inline": true,
-        "cleanCss": false
+        "cssnano": false
       }
     ]
   }
