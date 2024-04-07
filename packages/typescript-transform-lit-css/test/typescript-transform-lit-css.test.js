@@ -29,7 +29,6 @@ test('typescript-transform-lit-css', async function(assert) {
   await rm(OUTPUT_DIR, { recursive: true, force: true });
 
   await compile(FIXTURES_DIR);
-  await compile(join(FIXTURES_DIR, 'cleanCss'));
 
   assert.equal(
     await getCode('default/input.js'),
@@ -49,9 +48,11 @@ test('typescript-transform-lit-css', async function(assert) {
     'generates a inline style in typical element use',
   );
 
+  await compile(join(FIXTURES_DIR, 'cssnano'));
+
   assert.equal(
-    await getCode('cleanCss/input.js'),
-    await read('cleanCss/output.js'),
+    await getCode('cssnano/input.js'),
+    await read('cssnano/output.js'),
     'generates a inline style in typical element use, minified',
   );
 

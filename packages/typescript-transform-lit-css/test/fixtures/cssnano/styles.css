@@ -4,6 +4,10 @@ html {
     display: flex;
     &::part(thing) {
       color: blue;
+      padding-top: 1px;
+      padding-right: 2px;
+      padding-bottom: 3px;
+      padding-left: 4px;
     }
   }
 }

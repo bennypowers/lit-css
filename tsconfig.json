@@ -8,6 +8,8 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    // https://github.com/paulmillr/chokidar/issues/1299
+    "skipLibCheck": true,
     "moduleResolution": "Node",
     "baseUrl": ".",
     "paths": {

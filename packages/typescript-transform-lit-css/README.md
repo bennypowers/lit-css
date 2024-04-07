@@ -26,10 +26,14 @@ In the mean time, enjoy importing your CSS into your component files.
 
 | Name        | Accepts                                                            | Default |
 | ----------- | ------------------------------------------------------------------ | ------- |
-| `cleanCss`  | Boolean, whether to minify css with cleanCss.                      | `false` |
+| `cssnano`   | Boolean<sup>*</sup>.                                               | `false` |
 | `inline`    | Boolean, whether to inline css imports into the typescript source. | `false` |
 | `specifier` | Package to import `css` from                                       | `lit`   |
 | `tag`       | Name of the template-tag function                                  | `css`   |
+
+*NOTE*: because the TypeScript compiler API is sync-only, only certain cssnano 
+plugins are supported, and [cssnano configuration options][nanoopts] are not 
+supported. See [issue on cssnano][issue]. Certain optimizations will not apply.
 
 ## Usage
 
@@ -103,3 +107,6 @@ class CSSinCSS extends FASTElement {}
 Looking for esbuild? [esbuild-plugin-lit-css](../esbuild-plugin-lit-css)
 Looking for webpack? [lit-css-loader](../lit-css-loader)
 Looking for rollup? [rollup-plugin-lit-css](../rollup-plugin-lit-css)
+
+[nanoopts]: https://cssnano.co/docs/config-file/#configuration-options
+[issue]: https://github.com/cssnano/cssnano/issues/68

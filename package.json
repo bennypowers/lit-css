@@ -54,7 +54,6 @@
     "rollup": "^4.14.0",
     "rollup-plugin-alias": "^2.2.0",
     "sass": "^1.74.1",
-    "semantic-release": "^23.0.7",
     "tap-spec": "^5.0.0",
     "tap-summary": "^4.0.0",
     "tape": "^5.7.5",
