@@ -1,5 +1,18 @@
 # Change Log
 
+## 3.0.0
+
+### Major Changes
+
+- 2ef3460: Remove deprecated `uglifycss` options
+- 2ef3460: Minimum Node version is now 20. Older versions may continue to work but are unsupported.
+
+### Patch Changes
+
+- Updated dependencies [2ef3460]
+- Updated dependencies [2ef3460]
+  - @pwrs/lit-css@3.0.0
+
 ## 2.0.1
 
 ### Patch Changes

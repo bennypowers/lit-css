@@ -1,5 +1,12 @@
 # esbuild-plugin-minify-html-literals
 
+## 2.0.0
+
+### Major Changes
+
+- 2ef3460: Remove deprecated `uglifycss` options
+- 2ef3460: Minimum Node version is now 20. Older versions may continue to work but are unsupported.
+
 ## 1.0.6
 
 ### Patch Changes
