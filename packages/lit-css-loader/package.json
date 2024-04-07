@@ -1,7 +1,7 @@
 {
   "name": "lit-css-loader",
   "description": "Import CSS files as tagged template literals",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "type": "module",
   "main": "lit-css-loader.js",
   "types": "lit-css-loader.d.ts",
@@ -32,7 +32,7 @@
     "lit-css-loader.d.ts"
   ],
   "dependencies": {
-    "@pwrs/lit-css": "^2.1.0",
+    "@pwrs/lit-css": "^3.0.0",
     "loader-utils": "^3.2.1"
   }
 }
