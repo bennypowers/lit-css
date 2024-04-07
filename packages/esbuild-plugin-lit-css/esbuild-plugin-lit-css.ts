@@ -8,7 +8,7 @@ export interface LitCSSOptions extends Omit<Options, 'css'> {
 }
 
 export function litCssPlugin(options?: LitCSSOptions): Plugin {
-  const { filter = /\.css$/, specifier, tag, uglify, ...rest } = options ?? {};
+  const { filter = /\.css$/, specifier, tag, ...rest } = options ?? {};
   return {
     name: 'lit-css',
     setup(build) {
@@ -17,7 +17,7 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
         const css = await readFile(args.path, 'utf8');
         const filePath = args.path;
         try {
-          const contents = await transform({ css, specifier, tag, uglify, filePath, ...rest });
+          const contents = await transform({ css, specifier, tag, filePath, ...rest });
           return { contents, loader };
         } catch (error) {
           return {

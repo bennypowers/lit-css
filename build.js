@@ -56,7 +56,6 @@ export async function main() {
             'fs',
             'path',
             'util',
-            'uglify-js',
             'fsevents',
             'clean-css',
             'postcss',

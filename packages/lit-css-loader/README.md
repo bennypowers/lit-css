@@ -27,15 +27,14 @@ In the mean time, enjoy importing your CSS into your component files.
 
 ## Options
 
-| Name                                   | Accepts                                                                       | Default        |
-| -------------------------------------- | ----------------------------------------------------------------------------- | -------------- |
-| `include`                              | Array of glob of files to include.                                            | `['**/*.css']` |
-| `exclude`                              | Array of glob of files to exclude.                                            | `undefined`    |
-| `uglify` (**deprecated**: use cssnano) | Boolean or Object of [uglifycss][uglifyopts] options.                         | `false`        |
-| `cssnano`                              | Boolean or Object of [cssnano][nanoopts] options.                             | `false`        |
-| `specifier`                            | Package to import `css` from                                                  | `lit`          |
-| `tag`                                  | Name of the template-tag function                                             | `css`          |
-| `transform`                            | Optional function (sync or async) which transforms css sources (e.g. postcss) | `x => x`       |
+| Name        | Accepts                                                                       | Default        |
+| ----------- | ----------------------------------------------------------------------------- | -------------- |
+| `include`   | Array of glob of files to include.                                            | `['**/*.css']` |
+| `exclude`   | Array of glob of files to exclude.                                            | `undefined`    |
+| `cssnano`   | Boolean or Object of [cssnano][nanoopts] options.                             | `false`        |
+| `specifier` | Package to import `css` from                                                  | `lit`          |
+| `tag`       | Name of the template-tag function                                             | `css`          |
+| `transform` | Optional function (sync or async) which transforms css sources (e.g. postcss) | `x => x`       |
 
 ## Usage
 
@@ -127,6 +126,5 @@ Looking for typescript? [typescript-transform-lit-css](../typescript-transform-l
 
 [wds]: https://modern-web.dev/docs/dev-server/
 [modulesprop]: https://github.com/w3c/webcomponents/issues/759
-[uglifyopts]: https://www.npmjs.com/package/uglifycss#api
 [nanoopts]: https://cssnano.co/docs/config-file/#configuration-options
 

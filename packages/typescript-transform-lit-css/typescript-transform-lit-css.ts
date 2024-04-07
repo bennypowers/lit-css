@@ -12,8 +12,6 @@ import ts, { ImportDeclaration, SourceFile } from 'typescript';
 
 export interface LitCSSOptions extends Pick<Options, 'specifier'|'filePath'|'tag'> {
   filter: string;
-  /** @deprecated */
-  uglify: boolean;
   cssnano: boolean;
   inline: boolean;
 }
@@ -93,7 +91,7 @@ const getMinifiedStylesheet = (
   content: string,
   pluginConfig: PluginConfig & LitCSSOptions,
 ) =>
-    !(pluginConfig.cleanCss || pluginConfig.uglify) ? content
+    !(pluginConfig.cleanCss) ? content
   : new CleanCSS({ returnPromise: false }).minify(content).styles;
 
 function createInline(
