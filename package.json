@@ -40,7 +40,7 @@
     "arraybuffer-to-string": "^1.0.2",
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
-    "esbuild": "^0.20.2",
+    "esbuild": "^0.23.0",
     "esbuild-plugin-alias": "^0.2.1",
     "esm": "^3.2.25",
     "execa": "^8.0.1",
