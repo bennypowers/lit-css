@@ -1,5 +1,11 @@
 # esbuild-plugin-minify-html-literals
 
+## 2.0.1
+
+### Patch Changes
+
+- 56d5eaa: Update allowed esbuild versions
+
 ## 2.0.0
 
 ### Major Changes

@@ -1,5 +1,11 @@
 # esbuild-plugin-lit-css
 
+## 3.0.1
+
+### Patch Changes
+
+- 56d5eaa: Update allowed esbuild versions
+
 ## 3.0.0
 
 ### Major Changes
