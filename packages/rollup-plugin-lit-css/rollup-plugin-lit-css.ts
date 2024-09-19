@@ -1,13 +1,13 @@
 import type { Plugin } from 'rollup';
 import type { Options } from '@pwrs/lit-css/lit-css';
 
-import { createFilter } from '@rollup/pluginutils';
+import { createFilter, type FilterPattern } from '@rollup/pluginutils';
 import { transform } from '@pwrs/lit-css';
 import { resolve } from 'node:path';
 
 export interface LitCSSOptions extends Omit<Options, 'css'> {
-  include?: RegExp | string[];
-  exclude?: RegExp | string[];
+  include?: FilterPattern;
+  exclude?: FilterPattern;
 }
 
 export function litCss(options?: LitCSSOptions): Plugin {
