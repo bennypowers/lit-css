@@ -1,5 +1,11 @@
 # web-dev-server-plugin-lit-css
 
+## 3.0.1
+
+### Patch Changes
+
+- 75b4881: Corrected types for include and exclude. No runtime changes
+
 ## 3.0.0
 
 ### Major Changes

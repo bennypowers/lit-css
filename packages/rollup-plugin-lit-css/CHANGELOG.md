@@ -1,5 +1,11 @@
 # rollup-plugin-lit-css
 
+## 5.0.1
+
+### Patch Changes
+
+- 75b4881: Corrected types for include and exclude. No runtime changes
+
 ## 5.0.0
 
 ### Major Changes
