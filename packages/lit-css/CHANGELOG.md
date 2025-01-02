@@ -1,5 +1,11 @@
 # @pwrs/lit-css
 
+## 3.0.1
+
+### Patch Changes
+
+- b0cb17f: chore: bump cssnano from 6.x to 7.x
+
 ## 3.0.0
 
 ### Major Changes
