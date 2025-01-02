@@ -30,6 +30,6 @@
     "lit-css.d.ts"
   ],
   "dependencies": {
-    "cssnano": "^6.1.2"
+    "cssnano": "^7.0.6"
   }
 }
