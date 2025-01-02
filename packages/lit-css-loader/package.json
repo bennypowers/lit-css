@@ -32,7 +32,7 @@
     "lit-css-loader.d.ts"
   ],
   "dependencies": {
-    "@pwrs/lit-css": "^3.0.0",
+    "@pwrs/lit-css": "^3.0.1",
     "loader-utils": "^3.2.1"
   }
 }
