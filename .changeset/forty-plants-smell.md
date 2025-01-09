@@ -6,4 +6,4 @@
 "lit-css-loader": patch
 ---
 
-chore: Bump lit-css to 3.0.1
+chore: bump lit-css to 3.0.1
