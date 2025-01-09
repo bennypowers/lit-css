@@ -1,5 +1,11 @@
 # rollup-plugin-lit-css
 
+## 5.0.2
+
+### Patch Changes
+
+- 92f38fe: chore: bump lit-css to 3.0.1
+
 ## 5.0.1
 
 ### Patch Changes
