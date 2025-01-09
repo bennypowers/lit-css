@@ -37,7 +37,7 @@
     "typescript-transform-lit-css.d.ts"
   ],
   "dependencies": {
-    "@pwrs/lit-css": "^3.0.0"
+    "@pwrs/lit-css": "^3.0.1"
   },
   "peerDependencies": {
     "clean-css": "^5",
