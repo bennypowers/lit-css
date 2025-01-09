@@ -1,5 +1,11 @@
 # typescript-transform-lit-css
 
+## 2.0.1
+
+### Patch Changes
+
+- 92f38fe: chore: bump lit-css to 3.0.1
+
 ## 2.0.0
 
 ### Major Changes

@@ -1,5 +1,11 @@
 # esbuild-plugin-lit-css
 
+## 3.0.2
+
+### Patch Changes
+
+- 92f38fe: chore: bump lit-css to 3.0.1
+
 ## 3.0.1
 
 ### Patch Changes
