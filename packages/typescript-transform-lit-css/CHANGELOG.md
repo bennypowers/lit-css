@@ -1,5 +1,11 @@
 # typescript-transform-lit-css
 
+## 2.0.2
+
+### Patch Changes
+
+- d85e257: Prevent `Error: Debug Failure. Did not expect SourceFile to have an Identifier in its trivia`. See [Typescript#39854](https://github.com/microsoft/TypeScript/issues/39854#issuecomment-732494514).
+
 ## 2.0.1
 
 ### Patch Changes
