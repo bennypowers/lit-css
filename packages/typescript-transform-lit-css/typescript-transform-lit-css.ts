@@ -238,7 +238,6 @@ export default function(
     return (sourceFile: SourceFile) => {
       const children: ts.Node[] = [];
       sourceFile.forEachChild(node => children.push(node));
-
       const decl = (children.find(x =>
         !ts.isTypeOnlyImportOrExportDeclaration(x) &&
         !ts.isNamespaceImport(x) &&
