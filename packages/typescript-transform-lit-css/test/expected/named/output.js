@@ -1,3 +1,6 @@
 import { css } from "lit";
-const styles = css `html {\n  display: block;\n}\n`;
+const styles = css `html {
+  display: block;
+}
+`;
 export { styles as styles };
