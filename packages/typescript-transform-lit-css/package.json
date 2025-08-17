@@ -42,7 +42,7 @@
   "peerDependencies": {
     "clean-css": "^5",
     "postcss": "^8",
-    "postcss-nesting": "^12",
+    "postcss-nesting": "^12 || ^13",
     "typescript": "^5",
     "ts-patch": "^3.0",
     "lit": "^2.7.2 || ^3.0.0"

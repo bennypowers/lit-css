@@ -33,6 +33,6 @@
   ],
   "dependencies": {
     "@pwrs/lit-css": "^3.0.1",
-    "loader-utils": "^3.2.1"
+    "loader-utils": "^3.3.1"
   }
 }
