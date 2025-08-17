@@ -1,7 +1,7 @@
 {
   "name": "rollup-plugin-lit-css",
   "description": "Import CSS files as tagged template literals",
-  "version": "5.0.2",
+  "version": "6.0.0",
   "type": "module",
   "main": "rollup-plugin-lit-css.js",
   "types": "rollup-plugin-lit-css.d.ts",
@@ -31,7 +31,7 @@
     "rollup-plugin-lit-css.d.ts"
   ],
   "dependencies": {
-    "@pwrs/lit-css": "^3.0.1",
+    "@pwrs/lit-css": "^4.0.0",
     "@rollup/pluginutils": "^5.1.4"
   }
 }

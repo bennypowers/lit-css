@@ -1,5 +1,16 @@
 # web-dev-server-plugin-lit-css
 
+## 4.0.0
+
+### Major Changes
+
+- 0f9a613: Requires node >= 22
+
+### Patch Changes
+
+- Updated dependencies [0f9a613]
+  - @pwrs/lit-css@4.0.0
+
 ## 3.0.2
 
 ### Patch Changes

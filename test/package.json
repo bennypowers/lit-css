@@ -8,8 +8,8 @@
   "version": "1.0.10",
   "license": "MIT",
   "dependencies": {
-    "esbuild-plugin-lit-css": "3.0.2",
-    "lit-css-loader": "3.0.1",
-    "rollup-plugin-lit-css": "5.0.2"
+    "esbuild-plugin-lit-css": "4.0.0",
+    "lit-css-loader": "4.0.0",
+    "rollup-plugin-lit-css": "6.0.0"
   }
 }

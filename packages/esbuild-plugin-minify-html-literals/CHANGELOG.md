@@ -1,5 +1,11 @@
 # esbuild-plugin-minify-html-literals
 
+## 3.0.0
+
+### Major Changes
+
+- 0f9a613: Requires node >= 22
+
 ## 2.0.1
 
 ### Patch Changes
