@@ -45,14 +45,14 @@ export function litCSS(options?: LitCSSOptions): Plugin {
       // Quick check: only process potential CSS-like files
       // This is just a performance optimization - the filter does the real check
       if (!source.endsWith('.css') && !source.endsWith('.scss') && !source.endsWith('.sass') &&
-          !source.endsWith('.less') && !source.endsWith('.styl')) {
+          !source.endsWith('.less') && !source.endsWith('.styl'))
         return null;
-      }
+
 
       // Let other plugins (alias, etc.) resolve the import first
       // This handles bare specifiers, relative paths, and absolute paths
       const resolution = await this.resolve(source, importer, {
-        skipSelf: true,  // Don't call ourselves recursively
+        skipSelf: true, // Don't call ourselves recursively
         ...options,
       });
 
@@ -63,7 +63,7 @@ export function litCSS(options?: LitCSSOptions): Plugin {
       if (filter(resolution.id)) {
         // Return with .js extension so Rollup treats it as JavaScript
         // We use \0 prefix to mark this as a virtual module
-        return '\0' + resolution.id + '.lit-css.js';
+        return `\0${resolution.id}.lit-css.js`;
       }
 
       return null;
@@ -83,7 +83,7 @@ export function litCSS(options?: LitCSSOptions): Plugin {
           code,
           map: { mappings: '' },
         };
-      } catch (error: any) {
+      } catch (error) {
         this.error(error?.message ?? String(error));
       }
     },

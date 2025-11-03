@@ -1,5 +1,4 @@
 import litCSS from '../vite-plugin-lit-css.js';
-import aliasPlugin from '@rollup/plugin-alias';
 
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -52,15 +51,15 @@ run({
     // Vite build returns an array when using lib mode
     const buildOutput = Array.isArray(result) ? result[0] : result;
 
-    if (!buildOutput || !buildOutput.output) {
+    if (!buildOutput || !buildOutput.output)
       throw new Error('No output in build result');
-    }
+
 
     const chunk = buildOutput.output.find(item => item.type === 'chunk');
 
-    if (!chunk) {
+    if (!chunk)
       throw new Error('No chunk found in build output');
-    }
+
 
     return chunk.code;
   },
