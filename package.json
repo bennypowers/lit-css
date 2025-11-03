@@ -36,6 +36,7 @@
     "@parcel/config-default": "^2.16.0",
     "@parcel/core": "^2.16.0",
     "@parcel/plugin": "^2.16.0",
+    "@parcel/transformer-sass": "^2.16.0",
     "@pwrs/eslint-config": "^0.0.26",
     "@rollup/plugin-alias": "^5.1.1",
     "@types/node": "^22.15.18",

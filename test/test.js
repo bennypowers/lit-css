@@ -21,7 +21,7 @@ async function sassAsync(data, { filePath }) {
   });
 }
 
-export async function run({ name, dir, getCode }) {
+export async function run({ name, dir, getCode, skip = [] }) {
   const read = path => readFile(resolve(dir, 'expected', path), 'utf8');
 
   test(name, async function(assert) {
@@ -61,47 +61,53 @@ export async function run({ name, dir, getCode }) {
       'imports boop from snoot',
     );
 
-    assert.equal(
-      await getCode('scss/input.js', {
-        options: {
-          test: /\.scss$/, // for webpack
-          include: '/**/*.scss', // for rollup
-          filter: /\.scss$/, // for esbuild
-          cssnano: true,
-          transform: sassAsync,
-        },
-      }),
-      await read('scss/output.js'),
-      'transforms scss sources',
-    );
-
-    try {
-      await getCode('scss/error.js', {
-        options: {
-          test: /\.scss$/, // for webpack
-          include: '/**/*.scss', // for rollup
-          filter: /\.scss$/, // for esbuild
-          transform: sassAsync,
-        },
-      });
-    } catch (e) {
-      assert.match(
-        e.message,
-        new RegExp(`test/😁-FIXTURES/scss/error.scss 2:12  root stylesheet`),
-        'handles sass errors'
+    if (!skip.includes('scss-transform')) {
+      assert.equal(
+        await getCode('scss/input.js', {
+          options: {
+            test: /\.scss$/, // for webpack
+            include: '/**/*.scss', // for rollup
+            filter: /\.scss$/, // for esbuild
+            cssnano: true,
+            transform: sassAsync,
+          },
+        }),
+        await read('scss/output.js'),
+        'transforms scss sources',
       );
     }
 
-    assert.equal(
-      await getCode('postcss/input.js', {
-        options: {
-          cssnano: true,
-          transform: css => processor.process(css).css,
-        },
-      }),
-      await read('postcss/output.js'),
-      'transforms postcss sources',
-    );
+    if (!skip.includes('scss-error')) {
+      try {
+        await getCode('scss/error.js', {
+          options: {
+            test: /\.scss$/, // for webpack
+            include: '/**/*.scss', // for rollup
+            filter: /\.scss$/, // for esbuild
+            transform: sassAsync,
+          },
+        });
+      } catch (e) {
+        assert.match(
+          e.message,
+          new RegExp(`test/😁-FIXTURES/scss/error.scss 2:12  root stylesheet`),
+          'handles sass errors'
+        );
+      }
+    }
+
+    if (!skip.includes('postcss-transform')) {
+      assert.equal(
+        await getCode('postcss/input.js', {
+          options: {
+            cssnano: true,
+            transform: css => processor.process(css).css,
+          },
+        }),
+        await read('postcss/output.js'),
+        'transforms postcss sources',
+      );
+    }
 
     assert.end();
   });

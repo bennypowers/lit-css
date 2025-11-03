@@ -45,8 +45,7 @@ Options can be configured in your `package.json`:
   "lit-css": {
     "specifier": "@microsoft/fast-element",
     "tag": "css",
-    "cssnano": true,
-    "transform": "path/to/custom/transform.js"
+    "cssnano": true
   }
 }
 ```
@@ -56,7 +55,6 @@ Options can be configured in your `package.json`:
 - `specifier` (string): The module to import the CSS tag from. Defaults to `'lit'`.
 - `tag` (string): The name of the CSS tag function. Defaults to `'css'`.
 - `cssnano` (boolean): Enable CSS minification. Defaults to `false`.
-- `transform` (function | string): Custom CSS transformation function or path to a module exporting one.
 
 ## Example
 
@@ -94,31 +92,24 @@ export {
 
 ## Preprocessors
 
-You can use CSS preprocessors by providing a custom transform function:
-
-```javascript
-// custom-transform.js
-import Sass from 'sass';
-
-export default async function sassTransform(css, { filePath }) {
-  return new Promise((resolve, reject) => {
-    Sass.render({ data: css, file: filePath }, (err, result) => {
-      if (err) reject(err);
-      else resolve(result.css.toString());
-    });
-  });
-}
-```
-
-Then configure it in `package.json`:
+You can use CSS preprocessors by chaining Parcel's preprocessor transformers before this transformer in your `.parcelrc`:
 
 ```json
 {
-  "lit-css": {
-    "transform": "./custom-transform.js"
+  "extends": "@parcel/config-default",
+  "transformers": {
+    "*.scss": ["@parcel/transformer-sass", "parcel-transformer-lit-css"]
   }
 }
 ```
+
+Make sure to install the preprocessor transformer:
+
+```bash
+npm install --save-dev @parcel/transformer-sass
+```
+
+This works with any Parcel transformer, including PostCSS, Less, and Stylus.
 
 ## License
 
