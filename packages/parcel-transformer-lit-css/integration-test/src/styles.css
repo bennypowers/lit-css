@@ -1,0 +1,9 @@
+:host {
+  display: block;
+  padding: 16px;
+}
+
+h1 {
+  color: hotpink;
+  font-size: 2rem;
+}

@@ -1,5 +1,6 @@
 packages/*/test/expected/**/*.js
 packages/*/test/TSPC_OUTPUT/**/*.js
+packages/*/integration-test/**/*.js
 packages/*/*.js
 packages/*/*.cjs
 packages/*/*.js.map

@@ -1,0 +1,17 @@
+{
+  "name": "parcel-transformer-lit-css-integration-test",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "parcel build src/index.html --dist-dir dist",
+    "dev": "parcel src/index.html"
+  },
+  "dependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@parcel/config-default": "^2.12.0",
+    "parcel": "^2.12.0",
+    "parcel-transformer-lit-css": "file:../parcel-transformer-lit-css-1.0.0.tgz"
+  }
+}
