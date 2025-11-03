@@ -64,6 +64,7 @@ run({
 
       const packageJson = {
         name: 'parcel-lit-css-test',
+        type: 'module',
         ...(options && { 'lit-css': options }),
         ...(resolvedAlias && { alias: resolvedAlias }),
       };
