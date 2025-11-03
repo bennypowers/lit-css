@@ -2,7 +2,7 @@
 import { Parcel } from '@parcel/core';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { mkdtemp, writeFile, rm, symlink, readFile, mkdir, cp } from 'node:fs/promises';
+import { mkdtemp, writeFile, rm, symlink, readFile, cp } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 
 import { run } from '@lit-css/test/test.js';
@@ -18,6 +18,7 @@ run({
   skip: ['scss-transform', 'scss-error', 'postcss-transform'],
   async getCode(path, { options, alias } = {}) {
     const tmpDir = await mkdtemp(join(tmpdir(), 'parcel-lit-css-'));
+    let originalCwd;
 
     try {
       // Symlink root node_modules to tmpDir (contains all dependencies including @parcel and mock packages)
@@ -26,13 +27,10 @@ run({
       await symlink(rootNodeModules, nodeModulesLink, 'dir');
 
       // Copy the specific fixture subdirectory to tmpDir
-      const fixtureName = path.split('/')[0]; // e.g., 'basic' from 'basic/input.js'
+      const [fixtureName] = path.split('/'); // e.g., 'basic' from 'basic/input.js'
       const fixtureSourceDir = join(FIXTURES_DIR, fixtureName);
       const fixtureDestDir = join(tmpDir, fixtureName);
       await cp(fixtureSourceDir, fixtureDestDir, { recursive: true });
-
-      // Entry point will be in the copied fixture
-      const input = join(tmpDir, path);
 
       // Create .parcelrc configuration
       const parcelrcPath = join(tmpDir, '.parcelrc');
@@ -60,7 +58,7 @@ run({
       const resolvedAlias = alias ? Object.fromEntries(
         Object.entries(alias).map(([key, value]) => [
           key,
-          `./${fixtureName}/${value.replace('./', '')}`
+          `./${fixtureName}/${value.replace('./', '')}`,
         ])
       ) : undefined;
 
@@ -74,12 +72,11 @@ run({
       // Build with Parcel
       const distDir = join(tmpDir, 'dist');
 
-      // Change to tmpDir so relative paths work
-      const originalCwd = process.cwd();
+      originalCwd = process.cwd();
       process.chdir(tmpDir);
 
       const bundler = new Parcel({
-        entries: path,  // Now relative to tmpDir
+        entries: path, // Now relative to tmpDir
         config: parcelrcPath,
         defaultConfig: '@parcel/config-default',
         mode: 'production',
@@ -142,8 +139,8 @@ run({
       // or (0, _fastElement.css)(t || (t = _`CSS_HERE`));
       // or (0, _snoot.boop)(t || (t = _`CSS_HERE`)); for custom tag/specifier
       // or in integration tests: (0, _lit.css)`CSS_HERE`
-      const cssMatch = code.match(/\(0, _(\w+)\.(css|boop)\)\(t \|\| \(t = _`([\s\S]*?)`\)\);/)
-                    || code.match(/\(0, _(\w+)\.(css|boop)\)`([\s\S]*?)`/);
+      const cssMatch = code.match(/\(0, _(\w+)\.(css|boop)\)\(t \|\| \(t = _`([\s\S]*?)`\)\);/) ||
+                    code.match(/\(0, _(\w+)\.(css|boop)\)`([\s\S]*?)`/);
 
       if (!cssMatch) {
         // If we can't extract the CSS, return the full code for debugging
@@ -152,9 +149,9 @@ run({
       }
 
       // Determine which library and tag are being used based on the variable name
-      const libName = cssMatch[1];
-      const tag = cssMatch[2];
-      let importSource, importTag;
+      const [, libName, , cssContent] = cssMatch;
+      let importSource;
+      let importTag;
 
       if (libName === 'fastElement') {
         importSource = '@microsoft/fast-element';
@@ -167,19 +164,13 @@ run({
         importTag = 'css';
       }
 
-      const cssContent = cssMatch[3];
-
       // Reconstruct a simplified ES module format for comparison
       const simplifiedOutput = `import { ${importTag} } from "${importSource}";\nconst styles = ${importTag}\`${cssContent}\`;\nexport {\n  styles as default,\n  styles\n};\n`;
 
       return simplifiedOutput;
-    } catch (error) {
-      // Errors from pre-processing (if any) would be caught here
-      // Re-throw to be handled by the test
-      throw error;
     } finally {
-      // Restore original working directory
-      if (typeof originalCwd !== 'undefined')
+      // Restore original working directory if it was saved
+      if (originalCwd)
         process.chdir(originalCwd);
 
       // Cleanup temp directory (do this async without awaiting to avoid interfering with error propagation)
