@@ -22,7 +22,8 @@
     "lint": "eslint .",
     "test": "npm run build && tape 'packages/*/test/*.test.js' | tap-spec",
     "release": "npm run build && npm run test && npx changeset publish",
-    "clean": "rimraf 'packages/*/*.{cjs,js,d.ts,js.map,cjs.map}'"
+    "clean": "rimraf 'packages/*/*.{cjs,js,d.ts,js.map,cjs.map}'",
+    "postinstall": "node scripts/setup-mock-packages.js"
   },
   "workspaces": [
     "packages/*",
