@@ -1,0 +1,15 @@
+{
+  "name": "vite-plugin-lit-css-integration-test",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}

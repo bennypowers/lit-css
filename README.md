@@ -27,4 +27,5 @@ In the mean time, enjoy importing your CSS into your component files.
 - [esbuild](./packages/esbuild-plugin-lit-css)
 - [Webpack](./packages/lit-css-loader)
 - [Rollup](./packages/rollup-plugin-lit-css)
+- [Vite](./packages/vite-plugin-lit-css)
 - [TypeScript](./packages/typescript-transform-lit-css)
