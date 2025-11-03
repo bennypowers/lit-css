@@ -11,11 +11,12 @@ const link = join(rootDir, 'node_modules', 'snoot');
 if (!existsSync(link)) {
   try {
     symlinkSync(target, link, 'dir');
+    // eslint-disable-next-line no-console
     console.log('✓ Created symlink for mock package: snoot');
   } catch (error) {
     // Ignore errors (e.g., symlink already exists, permission denied in CI)
-    if (error.code !== 'EEXIST') {
+    if (error.code !== 'EEXIST')
+      // eslint-disable-next-line no-console
       console.warn('⚠ Could not create symlink for snoot:', error.message);
-    }
   }
 }
