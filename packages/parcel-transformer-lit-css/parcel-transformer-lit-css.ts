@@ -26,7 +26,7 @@ export default new Transformer({
       asset.setCode(code);
 
       return [asset];
-    } catch (error: any) {
+    } catch (error) {
       throw new Error(error?.message ?? String(error));
     }
   },

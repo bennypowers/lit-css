@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Parcel } from '@parcel/core';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -27,7 +28,8 @@ run({
       const parcelrcPath = join(tmpDir, '.parcelrc');
       // Copy the transformer to tmpDir to make it locally resolvable
       const localTransformerPath = join(tmpDir, 'transformer.js');
-      const transformerSource = await readFile(resolve(dir, '..', 'parcel-transformer-lit-css.js'), 'utf-8');
+      const transformerSource =
+        await readFile(resolve(dir, '..', 'parcel-transformer-lit-css.js'), 'utf-8');
       await writeFile(localTransformerPath, transformerSource);
 
       const parcelrc = {
