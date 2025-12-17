@@ -1,0 +1,14 @@
+{
+  "include": ["."],
+  "compilerOptions": {
+    "outDir": "../../TSPC_OUTPUT/import-attrs-module",
+    "module": "NodeNext",
+    "plugins": [
+      {
+        "transform": "typescript-transform-lit-css",
+        "inline": false,
+        "cssnano": false
+      }
+    ]
+  }
+}

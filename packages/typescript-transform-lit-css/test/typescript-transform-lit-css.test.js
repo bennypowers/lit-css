@@ -62,5 +62,11 @@ test('typescript-transform-lit-css', async function(assert) {
     'handles special chars in CSS',
   );
 
+  assert.equal(
+    await getCode('import-attrs/input.js'),
+    await read('import-attrs/output.js'),
+    'handles CSS imports with import attributes (with { type: "css" })',
+  );
+
   assert.end();
 });
