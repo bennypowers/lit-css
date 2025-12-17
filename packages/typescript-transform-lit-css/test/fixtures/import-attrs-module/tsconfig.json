@@ -1,5 +1,5 @@
 {
-  "include": ["."],
+  "include": [".", "../declaration.d.ts"],
   "compilerOptions": {
     "outDir": "../../TSPC_OUTPUT/import-attrs-module",
     "module": "NodeNext",

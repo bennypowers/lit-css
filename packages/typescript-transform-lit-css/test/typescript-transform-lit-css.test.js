@@ -68,5 +68,13 @@ test('typescript-transform-lit-css', async function(assert) {
     'handles CSS imports with import attributes (with { type: "css" })',
   );
 
+  await compile(join(FIXTURES_DIR, 'import-attrs-module'));
+
+  assert.equal(
+    await getCode('import-attrs-module/input.js'),
+    await read('import-attrs-module/output.js'),
+    'handles CSS imports with import attributes in non-inline mode',
+  );
+
   assert.end();
 });
