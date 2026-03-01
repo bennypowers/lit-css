@@ -17,10 +17,14 @@ const LOADER_MAP: Record<string, Loader> = {
   '.mjs': 'js',
   '.cjs': 'js',
   '.jsx': 'jsx',
+  '.mjsx': 'jsx',
+  '.cjsx': 'jsx',
   '.ts': 'ts',
   '.mts': 'ts',
   '.cts': 'ts',
   '.tsx': 'tsx',
+  '.mtsx': 'tsx',
+  '.ctsx': 'tsx',
 };
 
 function reExportBinding(binding: string, taggedTL: string): { part: string; exportPart: string } {
@@ -37,6 +41,16 @@ function reExportBinding(binding: string, taggedTL: string): { part: string; exp
   };
 }
 
+function namedBindingsToConsts(bindings: string, taggedTL: string): string {
+  return bindings.split(',').map(b => b.trim()).filter(Boolean)
+    .map(binding => {
+      const aliasMatch = binding.match(/^(\S+)\s+as\s+(\S+)$/);
+      const localName = aliasMatch ? aliasMatch[2] : binding;
+      return `const ${localName} = ${taggedTL}`;
+    })
+    .join(';\n');
+}
+
 function replaceStatement(statement: string, taggedTL: string): string | undefined {
   // export { default } from './styles.css'
   // export { X } from './styles.css'
@@ -45,6 +59,15 @@ function replaceStatement(statement: string, taggedTL: string): string | undefin
     const results = reExportMatch[1].split(',').map(b => b.trim()).filter(Boolean)
       .map(binding => reExportBinding(binding, taggedTL));
     return `${results.map(r => r.part).join(';\n')};\nexport { ${results.map(r => r.exportPart).join(', ')} }`;
+  }
+
+  // import Default, { named } from './styles.css'
+  const mixedMatch = statement.match(
+    /^import\s+(\w+)\s*,\s*\{([^}]+)\}\s*from\s*/,
+  );
+  if (mixedMatch) {
+    const [, defaultVar, named] = mixedMatch;
+    return `const ${defaultVar} = ${taggedTL};\n${namedBindingsToConsts(named, taggedTL)}`;
   }
 
   // import X from './styles.css'
@@ -56,15 +79,8 @@ function replaceStatement(statement: string, taggedTL: string): string | undefin
 
   // import { styles } from './styles.css'
   const namedImportMatch = statement.match(/^import\s*\{([^}]+)\}\s*from\s*/);
-  if (namedImportMatch) {
-    return namedImportMatch[1].split(',').map(b => b.trim()).filter(Boolean)
-      .map(binding => {
-        const aliasMatch = binding.match(/^(\S+)\s+as\s+(\S+)$/);
-        const localName = aliasMatch ? aliasMatch[2] : binding;
-        return `const ${localName} = ${taggedTL}`;
-      })
-      .join(';\n');
-  }
+  if (namedImportMatch)
+    return namedBindingsToConsts(namedImportMatch[1], taggedTL);
 
   // side-effect import or unrecognized pattern
   return undefined;
@@ -136,7 +152,10 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
             if (imp.n !== specifier)
               return false;
             const stmt = source.slice(imp.ss, imp.se);
-            const namedMatch = stmt.match(/^import\s*\{([^}]+)\}\s*from\s*/);
+            // match both `import { css } from` and `import X, { css } from`
+            const namedMatch = stmt.match(
+              /^import\s+(?:\w+\s*,\s*)?\{([^}]+)\}\s*from\s*/,
+            );
             if (!namedMatch)
               return false;
             const names = namedMatch[1].split(',').map(b => {
