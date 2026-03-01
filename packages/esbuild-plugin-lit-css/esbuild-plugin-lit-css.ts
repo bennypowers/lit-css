@@ -63,7 +63,7 @@ function replaceStatement(statement: string, taggedTL: string): string | undefin
 
   // import Default, { named } from './styles.css'
   const mixedMatch = statement.match(
-    /^import\s+(\w+)\s*,\s*\{([^}]+)\}\s*from\s*/,
+    /^import\s+([$\w]+)\s*,\s*\{([^}]+)\}\s*from\s*/,
   );
   if (mixedMatch) {
     const [, defaultVar, named] = mixedMatch;
@@ -71,7 +71,7 @@ function replaceStatement(statement: string, taggedTL: string): string | undefin
   }
 
   // import X from './styles.css'
-  const defaultImportMatch = statement.match(/^import\s+(\w+)\s+from\s*/);
+  const defaultImportMatch = statement.match(/^import\s+([$\w]+)\s+from\s*/);
   if (defaultImportMatch) {
     const [, varName] = defaultImportMatch;
     return `const ${varName} = ${taggedTL}`;
@@ -154,7 +154,7 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
             const stmt = source.slice(imp.ss, imp.se);
             // match both `import { css } from` and `import X, { css } from`
             const namedMatch = stmt.match(
-              /^import\s+(?:\w+\s*,\s*)?\{([^}]+)\}\s*from\s*/,
+              /^import\s+(?:[$\w]+\s*,\s*)?\{([^}]+)\}\s*from\s*/,
             );
             if (!namedMatch)
               return false;
@@ -203,28 +203,30 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
           const loader = LOADER_MAP[ext] ?? 'js';
           return { contents, loader };
         });
-      } else {
-        build.onLoad({ filter }, async args => {
-          const css = await readFile(args.path, 'utf8');
-          const filePath = args.path;
-          try {
-            const contents = await transform({ css, specifier, tag, filePath, ...rest });
-            return { contents, loader: 'js' };
-          } catch (error) {
-            return {
-              errors: [{
-                text: error.message,
-                detail: error,
-                location: {
-                  file: error.file,
-                  line: error.line,
-                  column: error.column,
-                },
-              }],
-            };
-          }
-        });
       }
+
+      // CSS onLoad: primary handler in non-inline mode,
+      // fallback for unhandled import patterns in inline mode
+      build.onLoad({ filter }, async args => {
+        const css = await readFile(args.path, 'utf8');
+        const filePath = args.path;
+        try {
+          const contents = await transform({ css, specifier, tag, filePath, ...rest });
+          return { contents, loader: 'js' };
+        } catch (error) {
+          return {
+            errors: [{
+              text: error.message,
+              detail: error,
+              location: {
+                file: error.file,
+                line: error.line,
+                column: error.column,
+              },
+            }],
+          };
+        }
+      });
     },
   };
 }
