@@ -1,0 +1,40 @@
+{
+  "name": "vite-plugin-lit-css",
+  "description": "Vite plugin to import CSS files as tagged template literals",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "vite-plugin-lit-css.js",
+  "types": "vite-plugin-lit-css.d.ts",
+  "exports": {
+    "import": "./vite-plugin-lit-css.js",
+    "require": "./vite-plugin-lit-css.cjs"
+  },
+  "author": "Benny Powers",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bennypowers/lit-css.git",
+    "directory": "packages/vite-plugin-lit-css"
+  },
+  "bugs": {
+    "url": "https://github.com/bennypowers/lit-css/issues"
+  },
+  "keywords": [
+    "lit",
+    "web-components",
+    "css",
+    "vite"
+  ],
+  "files": [
+    "vite-plugin-lit-css.cjs",
+    "vite-plugin-lit-css.js",
+    "vite-plugin-lit-css.d.ts"
+  ],
+  "dependencies": {
+    "@pwrs/lit-css": "^4.0.0",
+    "@rollup/pluginutils": "^5.1.4"
+  },
+  "peerDependencies": {
+    "vite": "^4.0.0 || ^5.0.0 || ^6.0.0"
+  }
+}
