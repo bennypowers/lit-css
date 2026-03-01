@@ -1,0 +1,42 @@
+{
+  "name": "parcel-transformer-lit-css",
+  "description": "Parcel transformer to import CSS files as tagged template literals",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "parcel-transformer-lit-css.js",
+  "types": "parcel-transformer-lit-css.d.ts",
+  "exports": {
+    "import": "./parcel-transformer-lit-css.js",
+    "require": "./parcel-transformer-lit-css.cjs"
+  },
+  "engines": {
+    "parcel": "^2.0.0"
+  },
+  "author": "Benny Powers",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bennypowers/lit-css.git",
+    "directory": "packages/parcel-transformer-lit-css"
+  },
+  "bugs": {
+    "url": "https://github.com/bennypowers/lit-css/issues"
+  },
+  "keywords": [
+    "lit",
+    "web-components",
+    "css",
+    "parcel"
+  ],
+  "files": [
+    "parcel-transformer-lit-css.cjs",
+    "parcel-transformer-lit-css.js",
+    "parcel-transformer-lit-css.d.ts"
+  ],
+  "dependencies": {
+    "@pwrs/lit-css": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@parcel/plugin": "^2.0.0"
+  }
+}

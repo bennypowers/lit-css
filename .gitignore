@@ -112,3 +112,4 @@ packages/*/*.cjs
 packages/*/*.js.map
 packages/*/*.cjs.map
 packages/*/*.d.ts
+.parcel-cache

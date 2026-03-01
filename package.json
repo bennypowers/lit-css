@@ -22,7 +22,8 @@
     "lint": "eslint .",
     "test": "npm run build && tape 'packages/*/test/*.test.js' | tap-spec",
     "release": "npm run build && npm run test && npx changeset publish",
-    "clean": "rimraf 'packages/*/*.{cjs,js,d.ts,js.map,cjs.map}'"
+    "clean": "rimraf 'packages/*/*.{cjs,js,d.ts,js.map,cjs.map}'",
+    "postinstall": "node scripts/setup-mock-packages.js"
   },
   "workspaces": [
     "packages/*",
@@ -33,6 +34,10 @@
     "@babel/preset-env": "^7.27.2",
     "@changesets/cli": "^2.29.4",
     "@microsoft/fast-element": "^2.3.0",
+    "@parcel/config-default": "^2.16.0",
+    "@parcel/core": "^2.16.0",
+    "@parcel/plugin": "^2.16.0",
+    "@parcel/transformer-sass": "^2.16.0",
     "@pwrs/eslint-config": "^0.0.26",
     "@rollup/plugin-alias": "^5.1.1",
     "@types/node": "^22.15.18",
