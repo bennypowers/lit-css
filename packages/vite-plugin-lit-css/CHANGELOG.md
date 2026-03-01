@@ -1,5 +1,11 @@
 # @pwrs/vite-plugin-lit-css
 
+## 2.0.0
+
+### Major Changes
+
+- 7ba04d5: Rename package from `vite-plugin-lit-css` to `@pwrs/vite-plugin-lit-css`
+
 ## 1.1.0
 
 ### Minor Changes
