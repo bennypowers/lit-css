@@ -1,5 +1,16 @@
 # esbuild-plugin-lit-css
 
+## 4.1.0
+
+### Minor Changes
+
+- 7422cd4: Add `inline` option to esbuild plugin. When enabled, CSS imports are inlined directly into the importing JS/TS module as tagged template literals, rather than creating separate modules. Also exports `toTaggedTemplateLiteral` from `@pwrs/lit-css`.
+
+### Patch Changes
+
+- Updated dependencies [7422cd4]
+  - @pwrs/lit-css@4.1.0
+
 ## 4.0.0
 
 ### Major Changes
