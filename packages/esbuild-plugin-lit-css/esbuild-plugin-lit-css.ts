@@ -76,19 +76,23 @@ async function replaceImport(
   importer: string,
   build: PluginBuild,
   getTaggedTL: (resolvedPath: string) => Promise<string>,
-): Promise<string> {
+  previouslyChanged: boolean,
+): Promise<{ contents: string; changed: boolean }> {
   const resolved = await build.resolve(imp.n, {
     importer,
     resolveDir: dirname(importer),
     kind: 'import-statement',
   });
   if (!resolved.path || resolved.external || resolved.errors.length)
-    return contents;
+    return { contents, changed: previouslyChanged };
   const taggedTL = await getTaggedTL(resolved.path);
   const replacement = replaceStatement(contents.slice(imp.ss, imp.se), taggedTL);
   if (replacement == null)
-    return contents;
-  return contents.slice(0, imp.ss) + replacement + contents.slice(imp.se);
+    return { contents, changed: previouslyChanged };
+  return {
+    contents: contents.slice(0, imp.ss) + replacement + contents.slice(imp.se),
+    changed: true,
+  };
 }
 
 export function litCssPlugin(options?: LitCSSOptions): Plugin {
@@ -116,9 +120,12 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
           }
 
           // find CSS imports matching the filter
-          const cssImports = imports.filter(imp =>
-            imp.n && filter.test(imp.n)
-          );
+          const cssImports = imports.filter(imp => {
+            if (!imp.n)
+              return false;
+            filter.lastIndex = 0;
+            return filter.test(imp.n);
+          });
 
           if (!cssImports.length)
             return undefined; // let esbuild handle normally
@@ -132,7 +139,10 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
             const namedMatch = stmt.match(/^import\s*\{([^}]+)\}\s*from\s*/);
             if (!namedMatch)
               return false;
-            const names = namedMatch[1].split(',').map(b => b.trim().split(/\s+as\s+/)[0]);
+            const names = namedMatch[1].split(',').map(b => {
+              const parts = b.trim().split(/\s+as\s+/);
+              return parts.length > 1 ? parts[1] : parts[0];
+            });
             return names.includes(tag);
           });
 
@@ -154,11 +164,20 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
           // process in reverse order to preserve string offsets
           const sorted = [...cssImports].sort((a, b) => b.ss - a.ss);
 
-          for (const imp of sorted)
-            contents = await replaceImport(imp, contents, args.path, build, getTaggedTL);
+          let anyRewritten: boolean;
+          ({ contents, changed: anyRewritten } = await sorted.reduce(
+            async (acc, imp) => {
+              const prev = await acc;
+              return replaceImport(
+                imp, prev.contents, args.path,
+                build, getTaggedTL, prev.changed,
+              );
+            },
+            Promise.resolve({ contents, changed: false as boolean }),
+          ));
 
           // inject tag import at the top if not already present
-          if (!alreadyImported)
+          if (anyRewritten && !alreadyImported)
             contents = `import {${tag}} from '${specifier}';\n${contents}`;
 
           const ext = extname(args.path);
