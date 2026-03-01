@@ -1,4 +1,4 @@
-# vite-plugin-lit-css
+# @pwrs/vite-plugin-lit-css
 
 Vite plugin to import CSS files as JavaScript tagged-template literal objects.
 
@@ -35,7 +35,7 @@ In the mean time, enjoy importing your CSS into your component files.
 ## Installation
 
 ```bash
-npm install --save-dev vite-plugin-lit-css
+npm install --save-dev @pwrs/vite-plugin-lit-css
 ```
 
 ## Usage
@@ -43,7 +43,7 @@ npm install --save-dev vite-plugin-lit-css
 ```js
 // vite.config.js
 import { defineConfig } from 'vite';
-import litCSS from 'vite-plugin-lit-css';
+import litCSS from '@pwrs/vite-plugin-lit-css';
 
 export default defineConfig({
   plugins: [
@@ -85,7 +85,7 @@ class CSSInCSS extends LitElement {
 ```js
 // vite.config.js
 import { defineConfig } from 'vite';
-import litCSS from 'vite-plugin-lit-css';
+import litCSS from '@pwrs/vite-plugin-lit-css';
 
 export default defineConfig({
   plugins: [
@@ -115,7 +115,7 @@ To load scss files:
 ```js
 // vite.config.js
 import { defineConfig } from 'vite';
-import litCSS from 'vite-plugin-lit-css';
+import litCSS from '@pwrs/vite-plugin-lit-css';
 import Sass from 'sass';
 
 export default defineConfig({
@@ -134,7 +134,7 @@ Similarly, to transform sources using PostCSS, specify a `transform` function:
 ```js
 // vite.config.js
 import { defineConfig } from 'vite';
-import litCSS from 'vite-plugin-lit-css';
+import litCSS from '@pwrs/vite-plugin-lit-css';
 import postcss from 'postcss';
 import postcssNesting from 'postcss-nesting';
 

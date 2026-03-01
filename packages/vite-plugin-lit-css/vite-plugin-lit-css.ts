@@ -35,7 +35,7 @@ export function litCSS(options?: LitCSSOptions): Plugin {
   const filter = createFilter(include, exclude);
 
   return {
-    name: 'vite-plugin-lit-css',
+    name: '@pwrs/vite-plugin-lit-css',
     enforce: 'pre', // Run before Vite's built-in CSS plugin
 
     async resolveId(source, importer, options) {

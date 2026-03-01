@@ -1,4 +1,4 @@
-# vite-plugin-lit-css
+# @pwrs/vite-plugin-lit-css
 
 ## 1.1.0
 
