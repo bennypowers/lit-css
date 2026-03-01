@@ -49,51 +49,24 @@ async function getCode(path, { options, alias } = {}) {
 
 run({ name: 'esbuild-plugin-lit-css', getCode, dir });
 
+/* eslint-disable easy-loops/easy-loops, max-len */
 test('esbuild-plugin-lit-css inline mode', async function(assert) {
   const read = path => readFile(resolve(dir, 'expected', path), 'utf8');
   const inline = { inline: true };
+  const edge = name => [`inline-edge-cases/${name}.js`, `inline-edge-cases/${name}.js`];
 
-  assert.equal(
-    await getCode('basic/input.js', { options: inline }),
-    await read('basic/inlined.js'),
-    'inlines re-exports into the importing module',
-  );
+  const cases = [
+    ['basic/input.js', 'basic/inlined.js', 'inlines re-exports into the importing module'],
+    [...edge('mixed-import'), 'handles mixed default + named import'],
+    [...edge('existing-tag-import'), 'skips tag injection when already imported'],
+    [...edge('unrelated-specifier-import'), 'injects tag import when specifier import exists but not the tag'],
+    [...edge('namespace-fallback'), 'falls back to module for namespace imports'],
+    [...edge('side-effect-fallback'), 'falls back to module for side-effect imports'],
+    [...edge('multiple-imports'), 'handles multiple imports of the same CSS file'],
+  ];
 
-  assert.equal(
-    await getCode('inline-edge-cases/mixed-import.js', { options: inline }),
-    await read('inline-edge-cases/mixed-import.js'),
-    'handles mixed default + named import',
-  );
-
-  assert.equal(
-    await getCode('inline-edge-cases/existing-tag-import.js', { options: inline }),
-    await read('inline-edge-cases/existing-tag-import.js'),
-    'skips tag injection when already imported',
-  );
-
-  assert.equal(
-    await getCode('inline-edge-cases/unrelated-specifier-import.js', { options: inline }),
-    await read('inline-edge-cases/unrelated-specifier-import.js'),
-    'injects tag import when specifier import exists but not the tag',
-  );
-
-  assert.equal(
-    await getCode('inline-edge-cases/namespace-fallback.js', { options: inline }),
-    await read('inline-edge-cases/namespace-fallback.js'),
-    'falls back to module for namespace imports',
-  );
-
-  assert.equal(
-    await getCode('inline-edge-cases/side-effect-fallback.js', { options: inline }),
-    await read('inline-edge-cases/side-effect-fallback.js'),
-    'falls back to module for side-effect imports',
-  );
-
-  assert.equal(
-    await getCode('inline-edge-cases/multiple-imports.js', { options: inline }),
-    await read('inline-edge-cases/multiple-imports.js'),
-    'handles multiple imports of the same CSS file',
-  );
+  for (const [input, expected, message] of cases)
+    assert.equal(await getCode(input, { options: inline }), await read(expected), message);
 
   assert.end();
 });

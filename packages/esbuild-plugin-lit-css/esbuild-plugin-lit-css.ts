@@ -183,17 +183,14 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
           // process in reverse order to preserve string offsets
           const sorted = [...cssImports].sort((a, b) => b.ss - a.ss);
 
-          let anyRewritten: boolean;
-          ({ contents, changed: anyRewritten } = await sorted.reduce(
-            async (acc, imp) => {
-              const prev = await acc;
-              return replaceImport(
-                imp, prev.contents, args.path,
-                build, getTaggedTL, prev.changed,
-              );
-            },
-            Promise.resolve({ contents, changed: false as boolean }),
-          ));
+          let anyRewritten = false;
+          // eslint-disable-next-line easy-loops/easy-loops
+          for (const imp of sorted) {
+            ({ contents, changed: anyRewritten } = await replaceImport(
+              imp, contents, args.path,
+              build, getTaggedTL, anyRewritten,
+            ));
+          }
 
           // inject tag import at the top, preserving any leading hashbang
           if (anyRewritten && !alreadyImported) {
