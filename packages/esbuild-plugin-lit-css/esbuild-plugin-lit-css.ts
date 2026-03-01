@@ -3,7 +3,7 @@ import type { Options } from '@pwrs/lit-css/lit-css';
 import { transform, toTaggedTemplateLiteral } from '@pwrs/lit-css';
 import { readFile } from 'node:fs/promises';
 import { init, parse } from 'es-module-lexer';
-import { dirname, resolve, extname } from 'node:path';
+import { dirname, extname } from 'node:path';
 
 export interface LitCSSOptions extends Omit<Options, 'css'> {
   filter: RegExp;
@@ -38,7 +38,13 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
           const source = await readFile(args.path, 'utf8');
 
           await init;
-          const [imports] = parse(source);
+
+          let imports;
+          try {
+            [imports] = parse(source);
+          } catch {
+            return undefined; // let esbuild handle normally
+          }
 
           // find CSS imports matching the filter
           const cssImports = imports.filter(imp =>
@@ -48,8 +54,12 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
           if (!cssImports.length)
             return undefined; // let esbuild handle normally
 
+          // check whether the tag is already imported from the specifier
+          const alreadyImported = imports.some(imp =>
+            imp.n === specifier
+          );
+
           let contents = source;
-          const dir = dirname(args.path);
 
           // deduplicate CSS reads by resolved path
           const cssCache = new Map<string, Promise<string>>();
@@ -68,7 +78,12 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
           const sorted = [...cssImports].sort((a, b) => b.ss - a.ss);
 
           for (const imp of sorted) {
-            const resolvedPath = resolve(dir, imp.n);
+            const resolved = await build.resolve(imp.n, {
+              importer: args.path,
+              resolveDir: dirname(args.path),
+              kind: 'import-statement',
+            });
+            const resolvedPath = resolved.path;
             const taggedTL = await getTaggedTL(resolvedPath);
             const statement = contents.slice(imp.ss, imp.se);
 
@@ -120,7 +135,7 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
               );
 
               if (defaultImportMatch) {
-                const varName = defaultImportMatch[1];
+                const [, varName] = defaultImportMatch;
                 replacement = `const ${varName} = ${taggedTL}`;
               } else if (namedImportMatch) {
                 const bindings = namedImportMatch[1]
@@ -147,9 +162,8 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
           }
 
           // inject tag import at the top if not already present
-          const tagImport = `import {${tag}} from '${specifier}';\n`;
-          if (!contents.includes(tagImport) && !contents.includes(`{${tag}}`))
-            contents = tagImport + contents;
+          if (!alreadyImported)
+            contents = `import {${tag}} from '${specifier}';\n` + contents;
 
           const ext = extname(args.path);
           const loader = LOADER_MAP[ext] ?? 'js';
