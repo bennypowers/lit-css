@@ -27,13 +27,16 @@ In the mean time, enjoy importing your CSS into your component files.
 
 ## Options
 
-| Name        | Accepts                                                                       | Default     |
-| ----------- | ----------------------------------------------------------------------------- | ----------- |
-| `filter`    | RegExp of file names to apply to                                              | `/\.css$/i` |
-| `cssnano`   | Boolean or Object of [cssnano][nanoopts] options.                             | `false`     |
-| `specifier` | Package to import `css` from                                                  | `lit`       |
-| `tag`       | Name of the template-tag function                                             | `css`       |
-| `transform` | Optional function (sync or async) which transforms css sources (e.g. postcss) | `x => x`    |
+| Name        | Accepts                                                                          | Default     |
+| ----------- | -------------------------------------------------------------------------------- | ----------- |
+| `filter`    | RegExp of file names to apply to                                                 | `/\.css$/i` |
+| `inline`    | Inline CSS into the importing JS/TS module instead of creating separate modules. | `false`     |
+| `cssnano`   | Boolean or Object of [cssnano][nanoopts] options.                                | `false`     |
+| `specifier` | Package to import `css` from                                                     | `lit`       |
+| `tag`       | Name of the template-tag function                                                | `css`       |
+| `transform` | Optional function (sync or async) which transforms css sources (e.g. postcss)    | `x => x`    |
+
+A note on performance: Setting the `inline` option will incurs a build performance penalty as JS/TS files are parsed twice (once by esbuild, once by es-module-lexer).
 
 ## Usage
 

@@ -6,6 +6,8 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { run } from '@lit-css/test/test.js';
+import { readFile } from 'node:fs/promises';
+import test from 'tape';
 
 import ab2str from 'arraybuffer-to-string';
 
@@ -46,3 +48,10 @@ async function getCode(path, { options, alias } = {}) {
 }
 
 run({ name: 'esbuild-plugin-lit-css', getCode, dir });
+
+test('esbuild-plugin-lit-css inline mode', async function(assert) {
+  const actual = await getCode('basic/input.js', { options: { inline: true } });
+  const expected = await readFile(resolve(dir, 'expected', 'basic', 'inlined.js'), 'utf8');
+  assert.equal(actual, expected, 'inlines CSS into the importing module');
+  assert.end();
+});
