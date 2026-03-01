@@ -1,5 +1,6 @@
-import type { Loader, Plugin } from 'esbuild';
+import type { Loader, Plugin, PluginBuild } from 'esbuild';
 import type { Options } from '@pwrs/lit-css/lit-css';
+import type { ImportSpecifier } from 'es-module-lexer';
 import { transform, toTaggedTemplateLiteral } from '@pwrs/lit-css';
 import { readFile } from 'node:fs/promises';
 import { init, parse } from 'es-module-lexer';
@@ -21,6 +22,72 @@ const LOADER_MAP: Record<string, Loader> = {
   '.cts': 'ts',
   '.tsx': 'tsx',
 };
+
+function reExportBinding(binding: string, taggedTL: string): { part: string; exportPart: string } {
+  const aliasMatch = binding.match(/^(\S+)\s+as\s+(\S+)$/);
+  const imported = aliasMatch ? aliasMatch[1] : binding;
+  const exported = aliasMatch ? aliasMatch[2] : binding;
+  const varName =
+      imported === 'default' ? (exported === 'default' ? '_styles' : exported)
+    : exported === imported ? imported
+    : `_${exported}`;
+  return {
+    part: `const ${varName} = ${taggedTL}`,
+    exportPart: varName === exported ? exported : `${varName} as ${exported}`,
+  };
+}
+
+function replaceStatement(statement: string, taggedTL: string): string | undefined {
+  // export { default } from './styles.css'
+  // export { X } from './styles.css'
+  const reExportMatch = statement.match(/^export\s*\{([^}]+)\}\s*from\s*/);
+  if (reExportMatch) {
+    const results = reExportMatch[1].split(',').map(b => b.trim()).filter(Boolean)
+      .map(binding => reExportBinding(binding, taggedTL));
+    return `${results.map(r => r.part).join(';\n')};\nexport { ${results.map(r => r.exportPart).join(', ')} }`;
+  }
+
+  // import X from './styles.css'
+  const defaultImportMatch = statement.match(/^import\s+(\w+)\s+from\s*/);
+  if (defaultImportMatch) {
+    const [, varName] = defaultImportMatch;
+    return `const ${varName} = ${taggedTL}`;
+  }
+
+  // import { styles } from './styles.css'
+  const namedImportMatch = statement.match(/^import\s*\{([^}]+)\}\s*from\s*/);
+  if (namedImportMatch) {
+    return namedImportMatch[1].split(',').map(b => b.trim()).filter(Boolean)
+      .map(binding => {
+        const aliasMatch = binding.match(/^(\S+)\s+as\s+(\S+)$/);
+        const localName = aliasMatch ? aliasMatch[2] : binding;
+        return `const ${localName} = ${taggedTL}`;
+      })
+      .join(';\n');
+  }
+
+  // side-effect import or unrecognized pattern
+  return undefined;
+}
+
+async function replaceImport(
+  imp: ImportSpecifier,
+  contents: string,
+  importer: string,
+  build: PluginBuild,
+  getTaggedTL: (resolvedPath: string) => Promise<string>,
+): Promise<string> {
+  const resolved = await build.resolve(imp.n, {
+    importer,
+    resolveDir: dirname(importer),
+    kind: 'import-statement',
+  });
+  const taggedTL = await getTaggedTL(resolved.path);
+  const replacement = replaceStatement(contents.slice(imp.ss, imp.se), taggedTL);
+  if (replacement == null)
+    return contents;
+  return contents.slice(0, imp.ss) + replacement + contents.slice(imp.se);
+}
 
 export function litCssPlugin(options?: LitCSSOptions): Plugin {
   const {
@@ -77,93 +144,12 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
           // process in reverse order to preserve string offsets
           const sorted = [...cssImports].sort((a, b) => b.ss - a.ss);
 
-          for (const imp of sorted) {
-            const resolved = await build.resolve(imp.n, {
-              importer: args.path,
-              resolveDir: dirname(args.path),
-              kind: 'import-statement',
-            });
-            const resolvedPath = resolved.path;
-            const taggedTL = await getTaggedTL(resolvedPath);
-            const statement = contents.slice(imp.ss, imp.se);
-
-            let replacement: string;
-
-            // export { default } from './styles.css'
-            // export { X } from './styles.css'
-            const reExportMatch = statement.match(
-              /^export\s*\{([^}]+)\}\s*from\s*/
-            );
-            if (reExportMatch) {
-              const bindings = reExportMatch[1]
-                .split(',')
-                .map(b => b.trim())
-                .filter(Boolean);
-
-              const parts: string[] = [];
-              const exportParts: string[] = [];
-
-              for (const binding of bindings) {
-                const aliasMatch = binding.match(/^(\S+)\s+as\s+(\S+)$/);
-                const imported = aliasMatch ? aliasMatch[1] : binding;
-                const exported = aliasMatch ? aliasMatch[2] : binding;
-
-                if (imported === 'default') {
-                  const varName = exported === 'default' ? '_styles' : exported;
-                  parts.push(`const ${varName} = ${taggedTL}`);
-                  exportParts.push(
-                    varName === exported ? exported : `${varName} as ${exported}`
-                  );
-                } else {
-                  // e.g. export { styles } from './styles.css'
-                  const varName = exported === imported ? imported : `_${exported}`;
-                  parts.push(`const ${varName} = ${taggedTL}`);
-                  exportParts.push(
-                    varName === exported ? exported : `${varName} as ${exported}`
-                  );
-                }
-              }
-              replacement = `${parts.join(';\n')};\nexport { ${exportParts.join(', ')} }`;
-            } else {
-              // import X from './styles.css'
-              // import { styles } from './styles.css'
-              const defaultImportMatch = statement.match(
-                /^import\s+(\w+)\s+from\s*/
-              );
-              const namedImportMatch = statement.match(
-                /^import\s*\{([^}]+)\}\s*from\s*/
-              );
-
-              if (defaultImportMatch) {
-                const [, varName] = defaultImportMatch;
-                replacement = `const ${varName} = ${taggedTL}`;
-              } else if (namedImportMatch) {
-                const bindings = namedImportMatch[1]
-                  .split(',')
-                  .map(b => b.trim())
-                  .filter(Boolean);
-                const parts: string[] = [];
-                for (const binding of bindings) {
-                  const aliasMatch = binding.match(/^(\S+)\s+as\s+(\S+)$/);
-                  const localName = aliasMatch ? aliasMatch[2] : binding;
-                  parts.push(`const ${localName} = ${taggedTL}`);
-                }
-                replacement = parts.join(';\n');
-              } else {
-                // side-effect import or unrecognized pattern — skip
-                continue;
-              }
-            }
-
-            contents =
-              contents.slice(0, imp.ss) +
-              replacement +
-              contents.slice(imp.se);
-          }
+          for (const imp of sorted)
+            contents = await replaceImport(imp, contents, args.path, build, getTaggedTL);
 
           // inject tag import at the top if not already present
           if (!alreadyImported)
-            contents = `import {${tag}} from '${specifier}';\n` + contents;
+            contents = `import {${tag}} from '${specifier}';\n${contents}`;
 
           const ext = extname(args.path);
           const loader = LOADER_MAP[ext] ?? 'js';
