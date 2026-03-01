@@ -50,8 +50,50 @@ async function getCode(path, { options, alias } = {}) {
 run({ name: 'esbuild-plugin-lit-css', getCode, dir });
 
 test('esbuild-plugin-lit-css inline mode', async function(assert) {
-  const actual = await getCode('basic/input.js', { options: { inline: true } });
-  const expected = await readFile(resolve(dir, 'expected', 'basic', 'inlined.js'), 'utf8');
-  assert.equal(actual, expected, 'inlines CSS into the importing module');
+  const read = path => readFile(resolve(dir, 'expected', path), 'utf8');
+  const inline = { inline: true };
+
+  assert.equal(
+    await getCode('basic/input.js', { options: inline }),
+    await read('basic/inlined.js'),
+    'inlines re-exports into the importing module',
+  );
+
+  assert.equal(
+    await getCode('inline-edge-cases/mixed-import.js', { options: inline }),
+    await read('inline-edge-cases/mixed-import.js'),
+    'handles mixed default + named import',
+  );
+
+  assert.equal(
+    await getCode('inline-edge-cases/existing-tag-import.js', { options: inline }),
+    await read('inline-edge-cases/existing-tag-import.js'),
+    'skips tag injection when already imported',
+  );
+
+  assert.equal(
+    await getCode('inline-edge-cases/unrelated-specifier-import.js', { options: inline }),
+    await read('inline-edge-cases/unrelated-specifier-import.js'),
+    'injects tag import when specifier import exists but not the tag',
+  );
+
+  assert.equal(
+    await getCode('inline-edge-cases/namespace-fallback.js', { options: inline }),
+    await read('inline-edge-cases/namespace-fallback.js'),
+    'falls back to module for namespace imports',
+  );
+
+  assert.equal(
+    await getCode('inline-edge-cases/side-effect-fallback.js', { options: inline }),
+    await read('inline-edge-cases/side-effect-fallback.js'),
+    'falls back to module for side-effect imports',
+  );
+
+  assert.equal(
+    await getCode('inline-edge-cases/multiple-imports.js', { options: inline }),
+    await read('inline-edge-cases/multiple-imports.js'),
+    'handles multiple imports of the same CSS file',
+  );
+
   assert.end();
 });
