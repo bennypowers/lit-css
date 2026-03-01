@@ -82,6 +82,8 @@ async function replaceImport(
     resolveDir: dirname(importer),
     kind: 'import-statement',
   });
+  if (!resolved.path || resolved.external || resolved.errors.length)
+    return contents;
   const taggedTL = await getTaggedTL(resolved.path);
   const replacement = replaceStatement(contents.slice(imp.ss, imp.se), taggedTL);
   if (replacement == null)
@@ -122,9 +124,17 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
             return undefined; // let esbuild handle normally
 
           // check whether the tag is already imported from the specifier
-          const alreadyImported = imports.some(imp =>
-            imp.n === specifier
-          );
+          // by inspecting the statement text of any import from that module
+          const alreadyImported = imports.some(imp => {
+            if (imp.n !== specifier)
+              return false;
+            const stmt = source.slice(imp.ss, imp.se);
+            const namedMatch = stmt.match(/^import\s*\{([^}]+)\}\s*from\s*/);
+            if (!namedMatch)
+              return false;
+            const names = namedMatch[1].split(',').map(b => b.trim().split(/\s+as\s+/)[0]);
+            return names.includes(tag);
+          });
 
           let contents = source;
 
