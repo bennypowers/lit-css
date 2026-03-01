@@ -195,9 +195,15 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
             Promise.resolve({ contents, changed: false as boolean }),
           ));
 
-          // inject tag import at the top if not already present
-          if (anyRewritten && !alreadyImported)
-            contents = `import {${tag}} from '${specifier}';\n${contents}`;
+          // inject tag import at the top, preserving any leading hashbang
+          if (anyRewritten && !alreadyImported) {
+            const tagImport = `import {${tag}} from '${specifier}';\n`;
+            const hashbangMatch = contents.match(/^#![^\n]*\n/);
+            if (hashbangMatch)
+              contents = hashbangMatch[0] + tagImport + contents.slice(hashbangMatch[0].length);
+            else
+              contents = tagImport + contents;
+          }
 
           const ext = extname(args.path);
           const loader = LOADER_MAP[ext] ?? 'js';
