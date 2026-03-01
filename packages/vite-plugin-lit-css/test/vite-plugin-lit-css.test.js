@@ -18,7 +18,7 @@ litCSS({
 
 run({
   dir,
-  name: 'vite-plugin-lit-css',
+  name: '@pwrs/vite-plugin-lit-css',
   async getCode(path, { options, alias } = {}) {
     const input = resolve(FIXTURES_DIR, path);
     const inputDir = dirname(input);
