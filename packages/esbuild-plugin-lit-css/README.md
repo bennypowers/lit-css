@@ -36,7 +36,7 @@ In the mean time, enjoy importing your CSS into your component files.
 | `tag`       | Name of the template-tag function                                                | `css`       |
 | `transform` | Optional function (sync or async) which transforms css sources (e.g. postcss)    | `x => x`    |
 
-A note on performance: Setting the `inline` option will incurs a build performance penalty as JS/TS files are parsed twice (once by esbuild, once by es-module-lexer).
+A note on performance: Setting the `inline` option will incur a build performance penalty as JS/TS files are parsed twice (once by esbuild, once by es-module-lexer).
 
 ## Usage
 
