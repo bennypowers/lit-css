@@ -54,20 +54,28 @@ async function cssnanoify(css: string, options: boolean|CssnanoOptions) {
   return result.css;
 }
 
-export async function transform({
+export async function toTaggedTemplateLiteral({
   css: source,
   filePath,
-  specifier = 'lit',
   tag = 'css',
   cssnano = false,
   transform = x => x,
-}: Options): Promise<string> {
+}: Omit<Options, 'specifier'>): Promise<string> {
   const css = await transform(source, { filePath });
   const cssContent =
       cssnano ? await cssnanoify(css, cssnano)
     : css;
+  return `${tag}${stringToTemplateLiteral(cssContent)}`;
+}
+
+export async function transform({
+  specifier = 'lit',
+  tag = 'css',
+  ...rest
+}: Options): Promise<string> {
+  const taggedTL = await toTaggedTemplateLiteral({ tag, ...rest });
   return `import {${tag}} from '${specifier}';
-export const styles = ${tag}${stringToTemplateLiteral(cssContent)};
+export const styles = ${taggedTL};
 export default styles;
 `;
 }
