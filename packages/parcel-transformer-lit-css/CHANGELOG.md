@@ -1,5 +1,11 @@
 # parcel-transformer-lit-css
 
+## 1.1.1
+
+### Patch Changes
+
+- 2ced312: Fix `@pwrs/lit-css` type import
+
 ## 1.1.0
 
 ### Minor Changes

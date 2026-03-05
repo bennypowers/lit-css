@@ -1,7 +1,7 @@
 {
   "name": "parcel-transformer-lit-css",
   "description": "Parcel transformer to import CSS files as tagged template literals",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "main": "parcel-transformer-lit-css.js",
   "types": "parcel-transformer-lit-css.d.ts",
