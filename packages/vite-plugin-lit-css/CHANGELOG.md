@@ -1,5 +1,11 @@
 # @pwrs/vite-plugin-lit-css
 
+## 2.0.1
+
+### Patch Changes
+
+- 2ced312: Fix `@pwrs/lit-css` type import
+
 ## 2.0.0
 
 ### Major Changes

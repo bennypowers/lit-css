@@ -1,5 +1,11 @@
 # web-dev-server-plugin-lit-css
 
+## 4.0.1
+
+### Patch Changes
+
+- 2ced312: Fix `@pwrs/lit-css` type import
+
 ## 4.0.0
 
 ### Major Changes

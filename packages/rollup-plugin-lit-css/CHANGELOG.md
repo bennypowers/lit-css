@@ -1,5 +1,11 @@
 # rollup-plugin-lit-css
 
+## 6.0.1
+
+### Patch Changes
+
+- 2ced312: Fix `@pwrs/lit-css` type import
+
 ## 6.0.0
 
 ### Major Changes
