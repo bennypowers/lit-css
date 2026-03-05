@@ -1,5 +1,5 @@
 import { Transformer } from '@parcel/plugin';
-import type { Options } from '@pwrs/lit-css/lit-css';
+import type { Options } from '@pwrs/lit-css';
 
 import { transform } from '@pwrs/lit-css';
 

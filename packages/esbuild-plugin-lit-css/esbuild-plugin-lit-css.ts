@@ -1,5 +1,5 @@
 import type { Loader, Plugin, PluginBuild } from 'esbuild';
-import type { Options } from '@pwrs/lit-css/lit-css';
+import type { Options } from '@pwrs/lit-css';
 import type { ImportSpecifier } from 'es-module-lexer';
 import { transform, toTaggedTemplateLiteral } from '@pwrs/lit-css';
 import { readFile } from 'node:fs/promises';

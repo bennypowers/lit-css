@@ -1,4 +1,4 @@
-import type { Options } from '@pwrs/lit-css/lit-css';
+import type { Options } from '@pwrs/lit-css';
 import type { Plugin } from '@web/dev-server-core';
 
 import { transform } from '@pwrs/lit-css';
