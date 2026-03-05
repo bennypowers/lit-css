@@ -1,4 +1,4 @@
-import type { Options } from '@pwrs/lit-css/lit-css';
+import type { Options } from '@pwrs/lit-css';
 import type { TransformerExtras, PluginConfig } from 'ts-patch';
 
 import { URL, pathToFileURL } from 'node:url';

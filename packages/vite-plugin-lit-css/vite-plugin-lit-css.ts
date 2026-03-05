@@ -1,5 +1,5 @@
 import type { Plugin } from 'vite';
-import type { Options } from '@pwrs/lit-css/lit-css';
+import type { Options } from '@pwrs/lit-css';
 
 import { createFilter, type FilterPattern } from '@rollup/pluginutils';
 import { transform } from '@pwrs/lit-css';
