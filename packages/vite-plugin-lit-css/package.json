@@ -1,7 +1,7 @@
 {
   "name": "@pwrs/vite-plugin-lit-css",
   "description": "Vite plugin to import CSS files as tagged template literals",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "type": "module",
   "main": "vite-plugin-lit-css.js",
   "types": "vite-plugin-lit-css.d.ts",
