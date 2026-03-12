@@ -76,6 +76,9 @@ export function litCSS(options?: LitCSSOptions): Plugin {
       // Extract the original CSS file path (remove \0 prefix and .lit-css.js suffix)
       const cleanId = id.replace(/^\0/, '').replace(/\.lit-css\.js$/, '');
 
+      // Watch the original CSS file so changes trigger rebuilds
+      this.addWatchFile(cleanId);
+
       try {
         const css = await readFile(cleanId, 'utf8');
         const code = await transform({ css, specifier, tag, filePath: cleanId, ...rest });
@@ -86,6 +89,13 @@ export function litCSS(options?: LitCSSOptions): Plugin {
       } catch (error) {
         this.error(error?.message ?? String(error));
       }
+    },
+
+    handleHotUpdate({ file, server, modules }) {
+      if (!filter(file)) return;
+      const virtualId = `\0${file}.lit-css.js`;
+      const module = server.moduleGraph.getModuleById(virtualId);
+      if (module) return [...modules, module];
     },
   };
 }
