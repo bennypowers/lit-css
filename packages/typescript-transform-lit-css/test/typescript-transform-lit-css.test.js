@@ -19,10 +19,11 @@ const getCode = path =>
   readFile(resolve(OUTPUT_DIR, path), 'utf-8');
 
 const compile = async dir => {
-  const result = await $`npx tspc -p ${dir}`;
-
-  if (result.stderr)
-    throw new Error(`TS ERROR: ${result.stderr}`);
+  try {
+    await $`npx tspc -p ${dir}`;
+  } catch (error) {
+    throw new Error(`TS ERROR: ${error.stderr || error.message}`);
+  }
 };
 
 test('typescript-transform-lit-css', async function(assert) {
