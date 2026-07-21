@@ -5,20 +5,26 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
 jobs:
   release:
     # Prevents changesets action from creating a PR on forks
     if: github.repository == 'bennypowers/lit-css'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 24
           cache: npm
+          registry-url: https://registry.npmjs.org
 
       - name: Install packages
-        run: sudo npm ci --prefer-offline
+        run: npm ci --prefer-offline
 
       - name: Test
         run: npm test
@@ -27,8 +33,6 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: npm run release
+          publish: npx changeset publish --provenance
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
