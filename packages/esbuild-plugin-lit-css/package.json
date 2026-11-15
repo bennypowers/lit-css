@@ -6,8 +6,17 @@
   "main": "esbuild-plugin-lit-css.js",
   "types": "esbuild-plugin-lit-css.d.ts",
   "exports": {
-    "import": "./esbuild-plugin-lit-css.js",
-    "require": "./esbuild-plugin-lit-css.cjs"
+    ".": {
+      "import": {
+        "types": "./esbuild-plugin-lit-css.d.ts",
+        "default": "./esbuild-plugin-lit-css.js"
+      },
+      "require": {
+        "types": "./esbuild-plugin-lit-css.d.cts",
+        "default": "./esbuild-plugin-lit-css.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "author": "Benny Powers <web@bennypowers.com>",
   "license": "ISC",
@@ -29,7 +38,8 @@
   "files": [
     "esbuild-plugin-lit-css.cjs",
     "esbuild-plugin-lit-css.js",
-    "esbuild-plugin-lit-css.d.ts"
+    "esbuild-plugin-lit-css.d.ts",
+    "esbuild-plugin-lit-css.d.cts"
   ],
   "dependencies": {
     "@pwrs/lit-css": "^4.1.0",

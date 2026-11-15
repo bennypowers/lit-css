@@ -6,8 +6,17 @@
   "main": "rollup-plugin-lit-css.js",
   "types": "rollup-plugin-lit-css.d.ts",
   "exports": {
-    "import": "./rollup-plugin-lit-css.js",
-    "require": "./rollup-plugin-lit-css.cjs"
+    ".": {
+      "import": {
+        "types": "./rollup-plugin-lit-css.d.ts",
+        "default": "./rollup-plugin-lit-css.js"
+      },
+      "require": {
+        "types": "./rollup-plugin-lit-css.d.cts",
+        "default": "./rollup-plugin-lit-css.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "author": "Benny Powers",
   "license": "ISC",
@@ -28,7 +37,8 @@
   "files": [
     "rollup-plugin-lit-css.cjs",
     "rollup-plugin-lit-css.js",
-    "rollup-plugin-lit-css.d.ts"
+    "rollup-plugin-lit-css.d.ts",
+    "rollup-plugin-lit-css.d.cts"
   ],
   "dependencies": {
     "@pwrs/lit-css": "^4.0.0",

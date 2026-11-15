@@ -6,8 +6,17 @@
   "main": "lit-css-loader.js",
   "types": "lit-css-loader.d.ts",
   "exports": {
-    "import": "./lit-css-loader.js",
-    "require": "./lit-css-loader.cjs"
+    ".": {
+      "import": {
+        "types": "./lit-css-loader.d.ts",
+        "default": "./lit-css-loader.js"
+      },
+      "require": {
+        "types": "./lit-css-loader.d.cts",
+        "default": "./lit-css-loader.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "author": "Benny Powers",
   "license": "ISC",
@@ -29,7 +38,8 @@
   "files": [
     "lit-css-loader.cjs",
     "lit-css-loader.js",
-    "lit-css-loader.d.ts"
+    "lit-css-loader.d.ts",
+    "lit-css-loader.d.cts"
   ],
   "dependencies": {
     "@pwrs/lit-css": "^4.0.0",

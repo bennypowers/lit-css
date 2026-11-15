@@ -15,14 +15,15 @@
     "url": "git+https://github.com/bennypowers/lit-css.git"
   },
   "scripts": {
-    "build": "npm run clean && run-p build:*",
+    "build": "npm run clean && run-p build:* && npm run cjs-types",
     "build:typescript": "npm run build -ws --if-present",
     "build:runtime": "node build.js",
     "build:types": "tsc",
+    "cjs-types": "node build.js --cjs-types",
     "lint": "eslint .",
     "test": "npm run build && tape 'packages/*/test/*.test.js' | tap-spec",
     "release": "npm run build && npm run test && npx changeset publish",
-    "clean": "rimraf 'packages/*/*.{cjs,js,d.ts,js.map,cjs.map}'",
+    "clean": "rimraf 'packages/*/*.{cjs,js,d.ts,d.cts,js.map,cjs.map}'",
     "postinstall": "node scripts/setup-mock-packages.js"
   },
   "workspaces": [

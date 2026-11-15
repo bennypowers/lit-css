@@ -6,13 +6,22 @@
   "main": "typescript-transform-lit-css.js",
   "types": "typescript-transform-lit-css.d.ts",
   "exports": {
-    "import": "./typescript-transform-lit-css.js",
-    "require": "./typescript-transform-lit-css.cjs"
+    ".": {
+      "import": {
+        "types": "./typescript-transform-lit-css.d.ts",
+        "default": "./typescript-transform-lit-css.js"
+      },
+      "require": {
+        "types": "./typescript-transform-lit-css.d.cts",
+        "default": "./typescript-transform-lit-css.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "author": "Benny Powers <web@bennypowers.com>",
   "license": "ISC",
   "scripts": {
-    "build": "run-s build:*",
+    "build": "run-s build:* && node ../../build.js --cjs-types typescript-transform-lit-css",
     "build:esm": "tsc",
     "build:cjs": "esbuild --format=cjs typescript-transform-lit-css.js --outfile=typescript-transform-lit-css.cjs"
   },
@@ -34,7 +43,8 @@
   "files": [
     "typescript-transform-lit-css.cjs",
     "typescript-transform-lit-css.js",
-    "typescript-transform-lit-css.d.ts"
+    "typescript-transform-lit-css.d.ts",
+    "typescript-transform-lit-css.d.cts"
   ],
   "dependencies": {
     "@pwrs/lit-css": "^4.0.0"

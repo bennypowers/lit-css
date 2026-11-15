@@ -6,8 +6,17 @@
   "main": "web-dev-server-plugin-lit-css.js",
   "types": "web-dev-server-plugin-lit-css.d.ts",
   "exports": {
-    "import": "./web-dev-server-plugin-lit-css.js",
-    "require": "./web-dev-server-plugin-lit-css.cjs"
+    ".": {
+      "import": {
+        "types": "./web-dev-server-plugin-lit-css.d.ts",
+        "default": "./web-dev-server-plugin-lit-css.js"
+      },
+      "require": {
+        "types": "./web-dev-server-plugin-lit-css.d.cts",
+        "default": "./web-dev-server-plugin-lit-css.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "author": "Benny Powers",
   "license": "ISC",
@@ -28,7 +37,8 @@
   "files": [
     "web-dev-server-plugin-lit-css.cjs",
     "web-dev-server-plugin-lit-css.js",
-    "web-dev-server-plugin-lit-css.d.ts"
+    "web-dev-server-plugin-lit-css.d.ts",
+    "web-dev-server-plugin-lit-css.d.cts"
   ],
   "dependencies": {
     "@pwrs/lit-css": "^4.0.0",

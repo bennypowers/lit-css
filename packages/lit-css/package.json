@@ -6,8 +6,17 @@
   "main": "lit-css.js",
   "types": "lit-css.d.ts",
   "exports": {
-    "import": "./lit-css.js",
-    "require": "./lit-css.cjs"
+    ".": {
+      "import": {
+        "types": "./lit-css.d.ts",
+        "default": "./lit-css.js"
+      },
+      "require": {
+        "types": "./lit-css.d.cts",
+        "default": "./lit-css.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "author": "Benny Powers",
   "license": "ISC",
@@ -27,7 +36,8 @@
   "files": [
     "lit-css.cjs",
     "lit-css.js",
-    "lit-css.d.ts"
+    "lit-css.d.ts",
+    "lit-css.d.cts"
   ],
   "dependencies": {
     "cssnano": "^7.0.7"

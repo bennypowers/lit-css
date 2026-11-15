@@ -1,9 +1,10 @@
 /* eslint-disable easy-loops/easy-loops */
 import esbuild from 'esbuild';
 import { globby } from 'globby';
-import { readFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { readFile, writeFile } from 'node:fs/promises';
+import { basename, dirname, resolve } from 'node:path';
 import { createRequire } from 'node:module';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const nativeNodeModulesPlugin = {
   name: 'native-node-modules',
@@ -42,13 +43,33 @@ const nativeNodeModulesPlugin = {
   },
 };
 
+/**
+ * Resolve an exports condition to the file it points at.
+ * Conditions may be a plain string or an object of nested conditions whose
+ * `default` is the runtime target.
+ */
+export function conditionTarget(condition) {
+  return typeof condition === 'string' ? condition : condition?.default;
+}
+
+/**
+ * Packages that build and typecheck themselves from their own scripts
+ * (`build:esm` / `build:cjs`) and are excluded from the root tsconfig, which
+ * keeps the root program from emitting a second copy of their declarations.
+ */
+const SELF_BUILT_PACKAGES = new Set(['typescript-transform-lit-css']);
+
 export async function main() {
   for (const pkgPath of await globby('packages/*/package.json')) {
-    if (pkgPath.match(/typescript-transform-lit-css/))
+    if ([...SELF_BUILT_PACKAGES].some(name => pkgPath.includes(`/${name}/`)))
       continue;
     const outdir = dirname(pkgPath);
     const pkg = JSON.parse(await readFile(pkgPath, 'utf8'));
-    for (const [type, filename] of Object.entries(pkg.exports)) {
+    const entry = pkg.exports['.'] ?? pkg.exports;
+    for (const type of ['import', 'require']) {
+      const filename = conditionTarget(entry[type]);
+      if (!filename)
+        continue;
       try {
         await esbuild.build({
           bundle: type === 'require',
@@ -78,4 +99,127 @@ export async function main() {
   }
 }
 
-main();
+/**
+ * Packages that publish types only through the ESM `import` condition.
+ *
+ * A copied `.d.cts` resolves `import type ... from '<dep>'` through `<dep>`'s
+ * `require` condition. When that condition has no useful named types (vite's
+ * `index.d.cts` is `declare const module: any; export = module`), the import
+ * fails with TS2305. Rewriting just those specifiers with an import attribute
+ * forces TypeScript to resolve them as ESM while keeping the declaring file CJS.
+ *
+ * Caveat: import attributes need TypeScript >= 5.3 to parse. Non-strict
+ * projects on TS 4.7-5.2 previously got no error here (implicit any) and now
+ * get a syntax error, so `@pwrs/vite-plugin-lit-css` effectively requires
+ * TypeScript >= 5.3 for CommonJS consumers.
+ */
+const ESM_ONLY_TYPE_DEPENDENCIES = ['vite'];
+
+function rewriteEsmOnlyTypeImports(source) {
+  return ESM_ONLY_TYPE_DEPENDENCIES.reduce((text, dep) => {
+    const specifier = dep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Declaration files carry no runtime imports, so rewriting every
+    // import/export-from clause is safe here. The lookahead keeps the rewrite
+    // idempotent. Value-level `import('dep')` type queries are not handled.
+    const pattern = new RegExp(
+      `((?:import|export)\\s[^;]*?\\sfrom\\s+)(['"])${specifier}\\2(?!\\s*with\\b)`,
+      'g',
+    );
+    return text.replace(pattern, `$1$2${dep}$2 with { 'resolution-mode': 'import' }`);
+  }, source);
+}
+
+/**
+ * Emit CommonJS-flavoured declarations (`.d.cts`) alongside the ESM `.d.ts` files.
+ *
+ * TypeScript derives a declaration file's module format from its extension, so
+ * CommonJS consumers resolving the `require` condition need `*.d.cts`. `tsc`
+ * only emits that extension for a `.cts` source, and each package here has a
+ * single ESM source, so the declarations are copied verbatim, except for imports
+ * of ESM-only type dependencies (see `ESM_ONLY_TYPE_DEPENDENCIES`).
+ *
+ * The copy is sound because the declarations use only syntax that TypeScript
+ * interprets the same way in both formats: named exports and `export default`
+ * (which denotes the `.default` property of the CJS exports object, matching
+ * esbuild's `__esModule` output). `export =` or `declare module` forms would
+ * NOT be copy-safe.
+ *
+ * `filter` scopes the run to one package (by name or directory basename). The
+ * self-built packages call this with their own name so a workspace-scoped
+ * `npm run build -w <pkg>` also emits its `.d.cts`.
+ */
+export async function cjsTypes({ root = dirname(fileURLToPath(import.meta.url)), filter } = {}) {
+  const errors = [];
+  let matched = 0;
+  for (const pkgPath of await globby('packages/*/package.json', { cwd: root, absolute: true })) {
+    const pkg = JSON.parse(await readFile(pkgPath, 'utf8'));
+    if (filter && pkg.name !== filter && basename(dirname(pkgPath)) !== filter)
+      continue;
+    matched++;
+    const entry = pkg.exports?.['.'];
+    const requireCondition = entry?.require;
+    const importCondition = entry?.import;
+    const cjsTypesFile = typeof requireCondition === 'string' ? undefined : requireCondition?.types;
+    const esmTypesFile =
+      (typeof importCondition === 'string' ? undefined : importCondition?.types) ?? pkg.types;
+    const hasCjsBuild = typeof requireCondition === 'string' || conditionTarget(requireCondition) != null;
+
+    if (!cjsTypesFile) {
+      // Packages that expose no CJS build at all are intentionally skipped, but
+      // a CJS build without declarations is a packaging bug.
+      if (hasCjsBuild)
+        errors.push(`${pkg.name}: exports["."].require resolves to a CJS build but exports["."].require.types is missing`);
+      continue;
+    }
+
+    if (!esmTypesFile) {
+      errors.push(`${pkg.name}: cannot determine ESM types path (exports["."].import.types or package.json "types")`);
+      continue;
+    }
+
+    const outdir = dirname(pkgPath);
+    const sourcePath = resolve(outdir, esmTypesFile);
+    const targetPath = resolve(outdir, cjsTypesFile);
+    if (sourcePath === targetPath) {
+      errors.push(`${pkg.name}: exports["."].import.types and exports["."].require.types must differ (both resolve to ${cjsTypesFile})`);
+      continue;
+    }
+    const expectedTarget = sourcePath.replace(/\.d\.ts$/, '.d.cts');
+    if (expectedTarget === sourcePath || targetPath !== expectedTarget) {
+      errors.push(`${pkg.name}: exports["."].require.types (${cjsTypesFile}) is not the .d.cts twin of exports["."].import.types (${esmTypesFile})`);
+      continue;
+    }
+    let source;
+    try {
+      source = await readFile(sourcePath, 'utf8');
+    } catch (error) {
+      if (error.code !== 'ENOENT')
+        throw error;
+      errors.push(`${pkg.name}: declarations missing at ${sourcePath} — run \`npm run build\` first`);
+      continue;
+    }
+    await writeFile(targetPath, rewriteEsmOnlyTypeImports(source));
+  }
+  if (filter && matched === 0)
+    errors.push(`filter '${filter}' matched no packages (expected a package name or packages/<dir> basename)`);
+  return { errors };
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const flagIndex = process.argv.indexOf('--cjs-types');
+  if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    console.log(`Usage:
+  node build.js                    build runtime bundles with esbuild
+  node build.js --cjs-types [pkg]  copy ESM declarations to CommonJS (*.d.cts)
+                                   pkg: package name or packages/<dir> basename`);
+  } else if (flagIndex !== -1) {
+    const filter = process.argv.slice(flagIndex + 1).find(arg => !arg.startsWith('-'));
+    const { errors } = await cjsTypes(filter ? { filter } : {});
+    for (const error of errors)
+      console.error(error);
+    if (errors.length > 0)
+      process.exitCode = 1;
+  } else {
+    main();
+  }
+}

@@ -6,8 +6,17 @@
   "main": "esbuild-plugin-minify-html-literals.js",
   "types": "esbuild-plugin-minify-html-literals.d.ts",
   "exports": {
-    "import": "./esbuild-plugin-minify-html-literals.js",
-    "require": "./esbuild-plugin-minify-html-literals.cjs"
+    ".": {
+      "import": {
+        "types": "./esbuild-plugin-minify-html-literals.d.ts",
+        "default": "./esbuild-plugin-minify-html-literals.js"
+      },
+      "require": {
+        "types": "./esbuild-plugin-minify-html-literals.d.cts",
+        "default": "./esbuild-plugin-minify-html-literals.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "author": "Benny Powers <web@bennypowers.com>",
   "license": "ISC",
@@ -29,7 +38,8 @@
   "files": [
     "esbuild-plugin-minify-html-literals.cjs",
     "esbuild-plugin-minify-html-literals.js",
-    "esbuild-plugin-minify-html-literals.d.ts"
+    "esbuild-plugin-minify-html-literals.d.ts",
+    "esbuild-plugin-minify-html-literals.d.cts"
   ],
   "dependencies": {
     "minify-html-literals": "^1.3.5"

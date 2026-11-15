@@ -6,6 +6,14 @@ Vite plugin to import CSS files as JavaScript tagged-template literal objects.
 
 You can use it to import CSS for various libraries like `lit`, `@microsoft/fast-element`, or others.
 
+## TypeScript Requirements
+
+TypeScript 5.3 or newer is required when consuming this package from a CommonJS
+project (`module` / `moduleResolution` set to `node16` or `nodenext` in a
+`"type": "commonjs"` package). The shipped CommonJS declarations use an import
+attribute to reach Vite's ESM-only types; earlier TypeScript versions cannot
+parse it.
+
 ## Do I Need This?
 
 No. This is an optional package whose sole purpose is to make it easier to write CSS-in-CSS while working on lit-element projects. You can just as easily write your CSS in some '`styles.css.js`' modules a la:
