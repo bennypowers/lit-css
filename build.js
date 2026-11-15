@@ -162,18 +162,19 @@ export async function cjsTypes({ root = dirname(fileURLToPath(import.meta.url)),
     const cjsTypesFile = typeof requireCondition === 'string' ? undefined : requireCondition?.types;
     const esmTypesFile =
       (typeof importCondition === 'string' ? undefined : importCondition?.types) ?? pkg.types;
-    const hasCjsBuild = typeof requireCondition === 'string' || conditionTarget(requireCondition) != null;
+    const hasCjsBuild =
+      typeof requireCondition === 'string' || conditionTarget(requireCondition) != null;
 
     if (!cjsTypesFile) {
       // Packages that expose no CJS build at all are intentionally skipped, but
       // a CJS build without declarations is a packaging bug.
       if (hasCjsBuild)
-        errors.push(`${pkg.name}: exports["."].require resolves to a CJS build but exports["."].require.types is missing`);
+        errors.push(`${pkg.name}: exports["."].require.types is missing`);
       continue;
     }
 
     if (!esmTypesFile) {
-      errors.push(`${pkg.name}: cannot determine ESM types path (exports["."].import.types or package.json "types")`);
+      errors.push(`${pkg.name}: cannot determine the ESM types path`);
       continue;
     }
 
@@ -181,12 +182,12 @@ export async function cjsTypes({ root = dirname(fileURLToPath(import.meta.url)),
     const sourcePath = resolve(outdir, esmTypesFile);
     const targetPath = resolve(outdir, cjsTypesFile);
     if (sourcePath === targetPath) {
-      errors.push(`${pkg.name}: exports["."].import.types and exports["."].require.types must differ (both resolve to ${cjsTypesFile})`);
+      errors.push(`${pkg.name}: require.types and import.types resolve to the same file`);
       continue;
     }
     const expectedTarget = sourcePath.replace(/\.d\.ts$/, '.d.cts');
     if (expectedTarget === sourcePath || targetPath !== expectedTarget) {
-      errors.push(`${pkg.name}: exports["."].require.types (${cjsTypesFile}) is not the .d.cts twin of exports["."].import.types (${esmTypesFile})`);
+      errors.push(`${pkg.name}: require.types is not the .d.cts twin of import.types`);
       continue;
     }
     let source;
@@ -195,19 +196,20 @@ export async function cjsTypes({ root = dirname(fileURLToPath(import.meta.url)),
     } catch (error) {
       if (error.code !== 'ENOENT')
         throw error;
-      errors.push(`${pkg.name}: declarations missing at ${sourcePath} — run \`npm run build\` first`);
+      errors.push(`${pkg.name}: ${esmTypesFile} is missing — run \`npm run build\` first`);
       continue;
     }
     await writeFile(targetPath, rewriteEsmOnlyTypeImports(source));
   }
   if (filter && matched === 0)
-    errors.push(`filter '${filter}' matched no packages (expected a package name or packages/<dir> basename)`);
+    errors.push(`filter '${filter}' matched no packages (expected a package name or dir)`);
   return { errors };
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+async function cli() {
   const flagIndex = process.argv.indexOf('--cjs-types');
   if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    // eslint-disable-next-line no-console
     console.log(`Usage:
   node build.js                    build runtime bundles with esbuild
   node build.js --cjs-types [pkg]  copy ESM declarations to CommonJS (*.d.cts)
@@ -216,10 +218,13 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const filter = process.argv.slice(flagIndex + 1).find(arg => !arg.startsWith('-'));
     const { errors } = await cjsTypes(filter ? { filter } : {});
     for (const error of errors)
+      // eslint-disable-next-line no-console
       console.error(error);
     if (errors.length > 0)
       process.exitCode = 1;
-  } else {
+  } else
     main();
-  }
 }
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href)
+  cli();

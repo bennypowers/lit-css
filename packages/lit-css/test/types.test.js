@@ -8,6 +8,7 @@ import test from 'tape';
 const pkgDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const repoDir = join(pkgDir, '..', '..');
 const tsc = join(repoDir, 'node_modules', '.bin', 'tsc');
+const CONSUMER_MANIFEST = JSON.stringify({ name: 'consumer', type: 'commonjs', private: true });
 
 /**
  * Creates a throwaway consumer project whose node_modules/<name>
@@ -25,7 +26,7 @@ async function linkPackage(dir, sourceDir, name) {
  */
 async function makeConsumer(dir) {
   await linkPackage(dir, pkgDir, '@pwrs/lit-css');
-  await writeFile(join(dir, 'package.json'), JSON.stringify({ name: 'consumer', type: 'commonjs', private: true }));
+  await writeFile(join(dir, 'package.json'), CONSUMER_MANIFEST);
   await writeFile(join(dir, 'index.ts'), /* ts */`
     import litCss = require('@pwrs/lit-css');
     const options: litCss.Options = { css: 'a { b: c }' };
@@ -110,7 +111,7 @@ test('every package publishes compilable CommonJS types', async t => {
 
   const dir = await mkdtemp(join(repoDir, '.tmp-lit-css-cjs-types-'));
   try {
-    await writeFile(join(dir, 'package.json'), JSON.stringify({ name: 'consumer', type: 'commonjs', private: true }));
+    await writeFile(join(dir, 'package.json'), CONSUMER_MANIFEST);
 
     for (const { dir: packageDir, name, types } of packages) {
       const safeName = name.replace(/[@/]/g, '-');
@@ -170,7 +171,7 @@ test('every package tarball contains its CommonJS types', async t => {
 
     let files;
     try {
-      files = JSON.parse(result.stdout)[0].files;
+      [{ files }] = JSON.parse(result.stdout);
     } catch {
       t.fail(`${name}: could not parse npm pack output: ${result.stdout}`);
       continue;

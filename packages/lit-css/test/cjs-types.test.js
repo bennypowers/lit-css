@@ -111,8 +111,12 @@ test('cjsTypes(): reports declarations missing instead of throwing ENOENT', asyn
       return;
     }
     t.equal(result.errors.length, 1, 'one error reported');
-    t.match(result.errors[0], /declarations missing/i, 'error says declarations are missing');
-    t.match(result.errors[0], /run `npm run build` first/, 'error says how to produce the declarations');
+    t.match(result.errors[0], /\.d\.ts is missing/i, 'error says declarations are missing');
+    t.match(
+      result.errors[0],
+      /run `npm run build` first/,
+      'error says how to produce the declarations',
+    );
     t.notOk(await exists(join(pkgDir, 'fixture-pkg.d.cts')), 'no .d.cts written');
   } finally {
     await rm(root, { recursive: true, force: true });
@@ -187,7 +191,8 @@ export declare function plugin(): Plugin & Inline;
     const cjs = await readFile(join(pkgDir, 'fixture-pkg.d.cts'), 'utf8');
     const rewritten = cjs.match(/with \{ 'resolution-mode': 'import' \}/g) ?? [];
     t.equal(rewritten.length, 3, 'all three import forms rewritten');
-    t.notOk(/\bfrom 'vite';/.test(cjs.replace(/'vite' with \{ 'resolution-mode': 'import' \}/g, '')), 'no bare vite import remains');
+    const withoutAttribute = cjs.replace(/'vite' with \{ 'resolution-mode': 'import' \}/g, '');
+    t.notOk(/\bfrom 'vite';/.test(withoutAttribute), 'no bare vite import remains');
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -223,7 +228,7 @@ test('cjsTypes(): refuses to rewrite the ESM declaration in place', async t => {
   try {
     const { errors } = await cjsTypes({ root });
     t.equal(errors.length, 1, 'one error reported');
-    t.match(errors[0], /must differ|same path/i, 'error explains the shared path');
+    t.match(errors[0], /same file/i, 'error explains the shared path');
     const esm = await readFile(join(pkgDir, 'fixture-pkg.d.ts'), 'utf8');
     t.equal(esm, DECLARATION, 'ESM declaration untouched');
   } finally {
@@ -276,7 +281,11 @@ test('cjsTypes(): reports a require.types that is not the .d.cts twin', async t 
 test('conditionTarget(): accepts string and nested condition objects', t => {
   t.equal(conditionTarget('./x.js'), './x.js', 'string condition');
   t.equal(conditionTarget({ default: './x.js' }), './x.js', 'nested condition');
-  t.equal(conditionTarget({ types: './x.d.ts', default: './x.js' }), './x.js', 'types-first nested condition');
+  t.equal(
+    conditionTarget({ types: './x.d.ts', default: './x.js' }),
+    './x.js',
+    'types-first nested condition',
+  );
   t.equal(conditionTarget(undefined), undefined, 'missing condition');
   t.end();
 });
