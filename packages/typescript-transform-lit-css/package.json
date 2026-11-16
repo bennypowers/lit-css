@@ -21,9 +21,9 @@
   "author": "Benny Powers <web@bennypowers.com>",
   "license": "ISC",
   "scripts": {
-    "build": "run-s build:* && node ../../build.js --cjs-types typescript-transform-lit-css",
+    "build": "run-s build:esm build:runtime && node ../../build.js --cjs-types typescript-transform-lit-css",
     "build:esm": "tsc",
-    "build:cjs": "esbuild --format=cjs typescript-transform-lit-css.js --outfile=typescript-transform-lit-css.cjs"
+    "build:runtime": "node ../../build.js --runtime typescript-transform-lit-css"
   },
   "repository": {
     "type": "git",

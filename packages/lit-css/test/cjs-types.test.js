@@ -58,6 +58,68 @@ test('cjsTypes(): copies ESM declarations to .d.cts', async t => {
   t.end();
 });
 
+test('cjsTypes(): rewrites a function default export to export =', async t => {
+  const declaration = `export interface Options { a?: string }
+export declare function plugin(options?: Options): void;
+export default plugin;
+`;
+  const { root, pkgDir } = await makeRoot({ declaration });
+  try {
+    const { errors } = await cjsTypes({ root });
+    t.deepEqual(errors, [], 'no errors');
+    const cjs = await readFile(join(pkgDir, 'fixture-pkg.d.cts'), 'utf8');
+    t.notOk(/export default/.test(cjs), 'default export removed');
+    t.match(cjs, /^declare function plugin\(/m, 'function declaration kept, unexported');
+    t.match(cjs, /^export = plugin;$/m, 'module assigns the function');
+    t.match(
+      cjs,
+      /export \{ plugin as default, Options, plugin \}/,
+      'namespace re-exports value and types',
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+  t.end();
+});
+
+test('cjsTypes(): const default exports keep only type exports in the namespace', async t => {
+  const declaration = `export type Options = { a?: string };
+declare const transformer: { run(options?: Options): void };
+export default transformer;
+`;
+  const { root, pkgDir } = await makeRoot({ declaration });
+  try {
+    const { errors } = await cjsTypes({ root });
+    t.deepEqual(errors, [], 'no errors');
+    const cjs = await readFile(join(pkgDir, 'fixture-pkg.d.cts'), 'utf8');
+    t.match(cjs, /^declare const transformer:/m, 'const declaration kept, unexported');
+    t.match(cjs, /export \{ Options \}/, 'type export survives in the namespace');
+    t.notOk(/transformer as default/.test(cjs), 'const cannot be re-exported from its namespace');
+    t.match(cjs, /^export = transformer;$/m, 'module assigns the const');
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+  t.end();
+});
+
+test('cjsTypes(): names an anonymous default function', async t => {
+  const declaration = `export interface Options { a?: string }
+export default function (options?: Options): void;
+`;
+  const { root, pkgDir } = await makeRoot({ declaration });
+  try {
+    const { errors } = await cjsTypes({ root });
+    t.deepEqual(errors, [], 'no errors');
+    const cjs = await readFile(join(pkgDir, 'fixture-pkg.d.cts'), 'utf8');
+    t.match(cjs, /^declare function defaultExport\(/m, 'anonymous function gets a name');
+    t.match(cjs, /export \{ defaultExport as default, Options \}/, 'namespace re-exports it');
+    t.match(cjs, /^export = defaultExport;$/m, 'module assigns the function');
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+  t.end();
+});
+
 test('cjsTypes(): reports a CJS build whose declarations are undeclared', async t => {
   const manifestJson = JSON.stringify({
     name: 'fixture-pkg',

@@ -58,12 +58,21 @@ export function conditionTarget(condition) {
  */
 const SELF_BUILT_PACKAGES = new Set(['typescript-transform-lit-css']);
 
-export async function main() {
-  for (const pkgPath of await globby('packages/*/package.json')) {
-    if ([...SELF_BUILT_PACKAGES].some(name => pkgPath.includes(`/${name}/`)))
-      continue;
+/**
+ * Build runtime bundles for every package, or only for `filter`.
+ *
+ * `filter` scopes the run to one package (by name or directory basename), which
+ * the self-built packages use to build their own bundles with the same esbuild
+ * settings (including the CJS interop footer) as the rest of the workspace.
+ */
+export async function main({ root = dirname(fileURLToPath(import.meta.url)), filter } = {}) {
+  for (const pkgPath of await globby('packages/*/package.json', { cwd: root, absolute: true })) {
     const outdir = dirname(pkgPath);
     const pkg = JSON.parse(await readFile(pkgPath, 'utf8'));
+    if (filter && pkg.name !== filter && basename(outdir) !== filter)
+      continue;
+    if (!filter && [...SELF_BUILT_PACKAGES].some(name => basename(outdir) === name))
+      continue;
     const entry = pkg.exports['.'] ?? pkg.exports;
     for (const type of ['import', 'require']) {
       const filename = conditionTarget(entry[type]);
@@ -86,11 +95,16 @@ export async function main() {
             // resolves its own lib files with require.resolve('../lib/*.js'),
             // which cannot work from inside a bundle.
             'minify-html-literals',
+            // The typescript transformer runs inside the consumer's compiler.
+            // Embedding a second compiler breaks AST kind checks and adds
+            // ~10 MB to the bundle.
+            'typescript',
           ] : [],
           entryPoints: [resolve(outdir, pkg.main).replace('.js', '.ts')],
           format: type === 'import' ? 'esm' : 'cjs',
           outfile: resolve(outdir, filename),
           sourcemap: true,
+          footer: type === 'require' ? { js: CJS_INTEROP_FOOTER } : undefined,
           target: type === 'import' ? 'es2020' : 'es2018',
           platform: 'node',
           plugins: [nativeNodeModulesPlugin],
@@ -108,6 +122,116 @@ export async function main() {
  * Packages that publish types only through the ESM `import` condition.
  *
  * A copied `.d.cts` resolves `import type ... from '<dep>'` through `<dep>`'s
+ * `require` condition. When that condition has no useful named types (vite's
+ * `index.d.cts` is `declare const module: any; export = module`), the import
+ * fails with TS2305. Rewriting just those specifiers with an import attribute
+ * forces TypeScript to resolve them as ESM while keeping the declaring file CJS.
+ *
+ * Caveat: import attributes need TypeScript >= 5.3 to parse. Non-strict
+ * projects on TS 4.7-5.2 previously got no error here (implicit any) and now
+ * get a syntax error, so `@pwrs/vite-plugin-lit-css` effectively requires
+ * TypeScript >= 5.3 for CommonJS consumers.
+ */
+/**
+ * Make `require()` return the default export of an esbuild CJS bundle.
+ *
+ * esbuild always emits `{ default, ...named }`. For packages whose default
+ * export is the plugin factory, CJS consumers expect `require('pkg')` to be
+ * callable (or, for object defaults, to be the object itself). The footer moves
+ * the default to `module.exports` and re-attaches the named exports, including
+ * `default`, so both spellings keep working.
+ */
+const CJS_INTEROP_FOOTER = `
+if (module.exports && typeof module.exports === 'object' && 'default' in module.exports) {
+  var named = module.exports;
+  var def = named.default;
+  if (def && (typeof def === 'function' || typeof def === 'object')) {
+    module.exports = Object.assign(def, named);
+    module.exports.default = def;
+  }
+}
+`;
+
+const DECLARATION_NAME = new RegExp(String.raw`^(?:export\s+)?(?:declare\s+)?` +
+  String.raw`(interface|type|function|const|class)\s+([A-Za-z_$][\w$]*)`);
+const DEFAULT_IDENTIFIER = /^export default ([A-Za-z_$][\w$]*);\s*$/;
+const DEFAULT_ANONYMOUS_FUNCTION = /^export default function(?:\s+([A-Za-z_$][\w$]*))?\s*\(/;
+const ANONYMOUS_DEFAULT_NAME = 'defaultExport';
+const MERGEABLE_WITH_NAMESPACE = new Set(['function', 'class']);
+
+/**
+ * Rewrite a `.d.ts` that has a default export into a CommonJS declaration.
+ *
+ * Exported declarations lose their `export` modifier, their names are
+ * re-exported from a namespace merged with the default value, and the module
+ * ends with `export =`. When the default is a function (or class), the
+ * namespace also exports it as `default`, so `.default` remains typed for
+ * consumers that already use it. A `const` default cannot merge with a
+ * namespace, so only type names are re-exported and `.default` is runtime-only.
+ * @param {string} source declaration file contents
+ * @return {string} contents for the matching `.d.cts`
+ */
+export function toCommonJsDeclaration(source) {
+  const declarations = new Map();
+  const exportedNames = [];
+  const lines = [];
+  let defaultValue;
+
+  for (const line of source.split('\n')) {
+    const identifier = DEFAULT_IDENTIFIER.exec(line);
+    if (identifier) {
+      [, defaultValue] = identifier;
+      continue;
+    }
+
+    const anonymousFunction = DEFAULT_ANONYMOUS_FUNCTION.exec(line);
+    if (anonymousFunction) {
+      defaultValue = anonymousFunction[1] ?? ANONYMOUS_DEFAULT_NAME;
+      declarations.set(defaultValue, 'function');
+      lines.push(line.replace(
+        DEFAULT_ANONYMOUS_FUNCTION,
+        `declare function ${defaultValue}(`,
+      ));
+      continue;
+    }
+
+    const declaration = DECLARATION_NAME.exec(line);
+    if (declaration)
+      declarations.set(declaration[2], declaration[1]);
+    if (line.startsWith('export ')) {
+      if (declaration)
+        exportedNames.push(declaration[2]);
+      lines.push(line.replace(/^export\s+/, ''));
+      continue;
+    }
+
+    lines.push(line);
+  }
+
+  if (!defaultValue)
+    return source;
+
+  const mergeable = MERGEABLE_WITH_NAMESPACE.has(declarations.get(defaultValue));
+  const namespaceMembers = [
+    ...(mergeable ? [`${defaultValue} as default`] : []),
+    ...exportedNames.filter(name => mergeable || declarations.get(name) === 'interface' ||
+      declarations.get(name) === 'type'),
+  ].filter((member, index, members) => members.indexOf(member) === index);
+
+  const namespace = namespaceMembers.length > 0 ? `
+
+declare namespace ${defaultValue} {
+  export { ${namespaceMembers.join(', ')} };
+}` : '';
+  return `${lines.join('\n').trimEnd()}${namespace}
+export = ${defaultValue};
+`;
+}
+
+/**
+ * Packages that publish types only through the ESM `import` condition.
+ *
+ * A `.d.cts` resolves `import type ... from '<dep>'` through `<dep>`'s
  * `require` condition. When that condition has no useful named types (vite's
  * `index.d.cts` is `declare const module: any; export = module`), the import
  * fails with TS2305. Rewriting just those specifiers with an import attribute
@@ -140,14 +264,18 @@ function rewriteEsmOnlyTypeImports(source) {
  * TypeScript derives a declaration file's module format from its extension, so
  * CommonJS consumers resolving the `require` condition need `*.d.cts`. `tsc`
  * only emits that extension for a `.cts` source, and each package here has a
- * single ESM source, so the declarations are copied verbatim, except for imports
- * of ESM-only type dependencies (see `ESM_ONLY_TYPE_DEPENDENCIES`).
+ * single ESM source, so the declarations are derived from the ESM output.
  *
- * The copy is sound because the declarations use only syntax that TypeScript
- * interprets the same way in both formats: named exports and `export default`
- * (which denotes the `.default` property of the CJS exports object, matching
- * esbuild's `__esModule` output). `export =` or `declare module` forms would
- * NOT be copy-safe.
+ * Two transformations happen:
+ *
+ * 1. Imports of ESM-only type dependencies gain a `resolution-mode` attribute
+ *    (see `ESM_ONLY_TYPE_DEPENDENCIES`).
+ * 2. When the package has a default export, its declarations are rewritten to
+ *    `export =` so `require()` returns the factory itself rather than an
+ *    `{ default, ... }` object. Named exports, including their types, move into
+ *    a namespace merged with the value, and `default` is re-exported there so
+ *    existing `require('pkg').default` code keeps its types. The runtime
+ *    bundles get an equivalent interop footer (see `CJS_INTEROP_FOOTER`).
  *
  * `filter` scopes the run to one package (by name or directory basename). The
  * self-built packages call this with their own name so a workspace-scoped
@@ -204,7 +332,7 @@ export async function cjsTypes({ root = dirname(fileURLToPath(import.meta.url)),
       errors.push(`${pkg.name}: ${esmTypesFile} is missing — run \`npm run build\` first`);
       continue;
     }
-    await writeFile(targetPath, rewriteEsmOnlyTypeImports(source));
+    await writeFile(targetPath, toCommonJsDeclaration(rewriteEsmOnlyTypeImports(source)));
   }
   if (filter && matched === 0)
     errors.push(`filter '${filter}' matched no packages (expected a package name or dir)`);
@@ -213,11 +341,13 @@ export async function cjsTypes({ root = dirname(fileURLToPath(import.meta.url)),
 
 async function cli() {
   const flagIndex = process.argv.indexOf('--cjs-types');
+  const runtimeIndex = process.argv.indexOf('--runtime');
   if (process.argv.includes('--help') || process.argv.includes('-h')) {
     // eslint-disable-next-line no-console
     console.log(`Usage:
   node build.js                    build runtime bundles with esbuild
-  node build.js --cjs-types [pkg]  copy ESM declarations to CommonJS (*.d.cts)
+  node build.js --runtime [pkg]    build runtime bundles for one package only
+  node build.js --cjs-types [pkg]  derive CommonJS declarations (*.d.cts)
                                    pkg: package name or packages/<dir> basename`);
   } else if (flagIndex !== -1) {
     const filter = process.argv.slice(flagIndex + 1).find(arg => !arg.startsWith('-'));
@@ -227,6 +357,9 @@ async function cli() {
       console.error(error);
     if (errors.length > 0)
       process.exitCode = 1;
+  } else if (runtimeIndex !== -1) {
+    const filter = process.argv.slice(runtimeIndex + 1).find(arg => !arg.startsWith('-'));
+    await main(filter ? { filter } : {});
   } else
     main();
 }
