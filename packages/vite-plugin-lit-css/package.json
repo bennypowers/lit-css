@@ -6,17 +6,8 @@
   "main": "vite-plugin-lit-css.js",
   "types": "vite-plugin-lit-css.d.ts",
   "exports": {
-    ".": {
-      "import": {
-        "types": "./vite-plugin-lit-css.d.ts",
-        "default": "./vite-plugin-lit-css.js"
-      },
-      "require": {
-        "types": "./vite-plugin-lit-css.d.cts",
-        "default": "./vite-plugin-lit-css.cjs"
-      }
-    },
-    "./package.json": "./package.json"
+    "import": "./vite-plugin-lit-css.js",
+    "require": "./vite-plugin-lit-css.cjs"
   },
   "author": "Benny Powers",
   "license": "ISC",
@@ -37,8 +28,7 @@
   "files": [
     "vite-plugin-lit-css.cjs",
     "vite-plugin-lit-css.js",
-    "vite-plugin-lit-css.d.ts",
-    "vite-plugin-lit-css.d.cts"
+    "vite-plugin-lit-css.d.ts"
   ],
   "dependencies": {
     "@pwrs/lit-css": "^4.1.0",

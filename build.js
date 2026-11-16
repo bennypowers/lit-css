@@ -100,34 +100,15 @@ export async function main() {
 }
 
 /**
- * Packages that publish types only through the ESM `import` condition.
+ * Packages that do not publish CommonJS declarations yet.
  *
- * A copied `.d.cts` resolves `import type ... from '<dep>'` through `<dep>`'s
- * `require` condition. When that condition has no useful named types (vite's
- * `index.d.cts` is `declare const module: any; export = module`), the import
- * fails with TS2305. Rewriting just those specifiers with an import attribute
- * forces TypeScript to resolve them as ESM while keeping the declaring file CJS.
- *
- * Caveat: import attributes need TypeScript >= 5.3 to parse. Non-strict
- * projects on TS 4.7-5.2 previously got no error here (implicit any) and now
- * get a syntax error, so `@pwrs/vite-plugin-lit-css` effectively requires
- * TypeScript >= 5.3 for CommonJS consumers.
+ * `@pwrs/vite-plugin-lit-css` re-exports types from Vite, whose `require`
+ * condition resolves to `declare const module: any; export = module`. A plain
+ * copy of its `.d.ts` therefore fails for CommonJS consumers; the follow-up
+ * change that either rewrites that import or imposes a compiler floor removes
+ * this entry.
  */
-const ESM_ONLY_TYPE_DEPENDENCIES = ['vite'];
-
-function rewriteEsmOnlyTypeImports(source) {
-  return ESM_ONLY_TYPE_DEPENDENCIES.reduce((text, dep) => {
-    const specifier = dep.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // Declaration files carry no runtime imports, so rewriting every
-    // import/export-from clause is safe here. The lookahead keeps the rewrite
-    // idempotent. Value-level `import('dep')` type queries are not handled.
-    const pattern = new RegExp(
-      `((?:import|export)\\s[^;]*?\\sfrom\\s+)(['"])${specifier}\\2(?!\\s*with\\b)`,
-      'g',
-    );
-    return text.replace(pattern, `$1$2${dep}$2 with { 'resolution-mode': 'import' }`);
-  }, source);
-}
+const CJS_TYPES_PENDING = new Set(['@pwrs/vite-plugin-lit-css']);
 
 /**
  * Emit CommonJS-flavoured declarations (`.d.cts`) alongside the ESM `.d.ts` files.
@@ -135,8 +116,7 @@ function rewriteEsmOnlyTypeImports(source) {
  * TypeScript derives a declaration file's module format from its extension, so
  * CommonJS consumers resolving the `require` condition need `*.d.cts`. `tsc`
  * only emits that extension for a `.cts` source, and each package here has a
- * single ESM source, so the declarations are copied verbatim, except for imports
- * of ESM-only type dependencies (see `ESM_ONLY_TYPE_DEPENDENCIES`).
+ * single ESM source, so the declarations are copied verbatim.
  *
  * The copy is sound because the declarations use only syntax that TypeScript
  * interprets the same way in both formats: named exports and `export default`
@@ -154,6 +134,8 @@ export async function cjsTypes({ root = dirname(fileURLToPath(import.meta.url)),
   for (const pkgPath of await globby('packages/*/package.json', { cwd: root, absolute: true })) {
     const pkg = JSON.parse(await readFile(pkgPath, 'utf8'));
     if (filter && pkg.name !== filter && basename(dirname(pkgPath)) !== filter)
+      continue;
+    if (CJS_TYPES_PENDING.has(pkg.name))
       continue;
     matched++;
     const entry = pkg.exports?.['.'];
@@ -199,7 +181,7 @@ export async function cjsTypes({ root = dirname(fileURLToPath(import.meta.url)),
       errors.push(`${pkg.name}: ${esmTypesFile} is missing — run \`npm run build\` first`);
       continue;
     }
-    await writeFile(targetPath, rewriteEsmOnlyTypeImports(source));
+    await writeFile(targetPath, source);
   }
   if (filter && matched === 0)
     errors.push(`filter '${filter}' matched no packages (expected a package name or dir)`);

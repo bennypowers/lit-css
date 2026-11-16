@@ -6,8 +6,7 @@ import test from 'tape';
 
 import { cjsTypes, conditionTarget } from '../../../build.js';
 
-const DECLARATION = `import type { Plugin } from 'vite';
-export declare function plugin(): Plugin;
+const DECLARATION = `export declare function plugin(): string;
 `;
 
 function manifest(overrides = {}) {
@@ -52,24 +51,6 @@ test('cjsTypes(): copies ESM declarations to .d.cts', async t => {
     t.match(cjs, /export declare function plugin\(\)/, 'declaration copied');
     const esm = await readFile(join(pkgDir, 'fixture-pkg.d.ts'), 'utf8');
     t.equal(esm, DECLARATION, 'ESM declaration untouched');
-  } finally {
-    await rm(root, { recursive: true, force: true });
-  }
-  t.end();
-});
-
-test('cjsTypes(): rewrites ESM-only type imports in .d.cts only', async t => {
-  const { root, pkgDir } = await makeRoot();
-  try {
-    const { errors } = await cjsTypes({ root });
-    t.deepEqual(errors, [], 'no errors');
-    const cjs = await readFile(join(pkgDir, 'fixture-pkg.d.cts'), 'utf8');
-    t.ok(
-      cjs.includes(`from 'vite' with { 'resolution-mode': 'import' }`),
-      'import attribute added in .d.cts',
-    );
-    const esm = await readFile(join(pkgDir, 'fixture-pkg.d.ts'), 'utf8');
-    t.notOk(esm.includes('resolution-mode'), 'ESM declaration untouched');
   } finally {
     await rm(root, { recursive: true, force: true });
   }
@@ -178,42 +159,7 @@ test('cjsTypes(): a filter that matches nothing is an error', async t => {
   t.end();
 });
 
-test('cjsTypes(): rewrites inline and re-exported ESM-only type imports', async t => {
-  const declaration = `import { type Plugin } from 'vite';
-export type { Plugin as VitePlugin } from 'vite';
-import type { Inline } from 'vite';
-export declare function plugin(): Plugin & Inline;
-`;
-  const { root, pkgDir } = await makeRoot({ declaration });
-  try {
-    const { errors } = await cjsTypes({ root });
-    t.deepEqual(errors, [], 'no errors');
-    const cjs = await readFile(join(pkgDir, 'fixture-pkg.d.cts'), 'utf8');
-    const rewritten = cjs.match(/with \{ 'resolution-mode': 'import' \}/g) ?? [];
-    t.equal(rewritten.length, 3, 'all three import forms rewritten');
-    const withoutAttribute = cjs.replace(/'vite' with \{ 'resolution-mode': 'import' \}/g, '');
-    t.notOk(/\bfrom 'vite';/.test(withoutAttribute), 'no bare vite import remains');
-  } finally {
-    await rm(root, { recursive: true, force: true });
-  }
-  t.end();
-});
-
-test('cjsTypes(): does not double-apply the rewrite when run twice', async t => {
-  const { root, pkgDir } = await makeRoot();
-  try {
-    await cjsTypes({ root });
-    const { errors } = await cjsTypes({ root });
-    t.deepEqual(errors, [], 'second run reports no errors');
-    const cjs = await readFile(join(pkgDir, 'fixture-pkg.d.cts'), 'utf8');
-    t.equal(cjs.match(/resolution-mode/g)?.length, 1, 'attribute applied exactly once');
-  } finally {
-    await rm(root, { recursive: true, force: true });
-  }
-  t.end();
-});
-
-test('cjsTypes(): refuses to rewrite the ESM declaration in place', async t => {
+test('cjsTypes(): refuses to write the ESM declaration in place', async t => {
   const shared = JSON.stringify({
     name: 'fixture-pkg',
     types: './fixture-pkg.d.ts',

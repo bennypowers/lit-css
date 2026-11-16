@@ -8,7 +8,7 @@ function stringToTemplateLiteral(x = '') {
 
 export interface Meta {
   /**
-   * Path to the source file being transformed, when known
+   * Path to the source file being transformed
    * Typically passed to transform functions e.g.
    * @example
    * ```js
@@ -16,7 +16,7 @@ export interface Meta {
    *   Sass.renderSync(data, { file: filePath }).css.toString()
    * ```
    */
-  filePath?: string;
+  filePath: string;
 }
 
 export interface Options {

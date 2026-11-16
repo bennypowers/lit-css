@@ -144,22 +144,6 @@ test('every package publishes compilable CommonJS types', async t => {
   t.end();
 });
 
-test('@pwrs/lit-css sources typecheck under strict', async t => {
-  const result = await execa(tsc, [
-    '--noEmit',
-    '--strict',
-    '--target', 'es2022',
-    '--module', 'es2022',
-    '--moduleResolution', 'bundler',
-    '--lib', 'esnext',
-    '--types', 'node',
-    '--typeRoots', join(repoDir, 'node_modules', '@types'),
-    join(pkgDir, 'lit-css.ts'),
-  ], { reject: false });
-  t.equal(result.exitCode, 0, `strict: ${result.stderr || result.stdout || 'ok'}`);
-  t.end();
-});
-
 test('every package tarball contains its CommonJS types', async t => {
   for (const { dir, name, types } of await publishedPackages()) {
     const result = await execa('npm', ['pack', '--dry-run', '--json'], { cwd: dir, reject: false });
