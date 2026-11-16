@@ -1,5 +1,28 @@
 # @pwrs/vite-plugin-lit-css
 
+## 3.0.1
+
+### Patch Changes
+
+- 44061c9: Widen the `vite` peer range to include 7 and 8. The plugin already builds and
+  typechecks against both; the range was the only thing stopping installs.
+  
+  The integration fixture now uses vite 8, and PR CI builds it against vite 7 and
+  8 so a future major fails here before it reaches consumers.
+- 7c3a368: Make CommonJS entries expose their default export directly, so
+  `const plugin = require('@pwrs/vite-plugin-lit-css')` is the plugin factory
+  instead of `{ default, ... }`. Named exports and `default` stay attached, so
+  existing `require('pkg').default` code keeps working at runtime.
+  
+  The generated `.d.cts` files now use `export =` with a merged namespace, so
+  `import pkg = require('pkg')` is callable and typed, while named types remain
+  reachable as `pkg.LitCSSOptions`. A `const` default (webpack loader, Parcel
+  transformer) cannot merge with a namespace, so for those two packages only type
+  exports are re-exported and `.default` is untyped.
+  
+  `typescript-transform-lit-css` now keeps `typescript` external in its CommonJS
+  bundle, so it runs against the consumer's compiler instead of an embedded copy.
+
 ## 3.0.0
 
 ### Major Changes
