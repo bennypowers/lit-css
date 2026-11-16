@@ -1,9 +1,10 @@
 /* eslint-disable easy-loops/easy-loops */
 import esbuild from 'esbuild';
 import { globby } from 'globby';
-import { readFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { readFile, writeFile } from 'node:fs/promises';
+import { basename, dirname, resolve } from 'node:path';
 import { createRequire } from 'node:module';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const nativeNodeModulesPlugin = {
   name: 'native-node-modules',
@@ -42,13 +43,33 @@ const nativeNodeModulesPlugin = {
   },
 };
 
+/**
+ * Resolve an exports condition to the file it points at.
+ * Conditions may be a plain string or an object of nested conditions whose
+ * `default` is the runtime target.
+ */
+export function conditionTarget(condition) {
+  return typeof condition === 'string' ? condition : condition?.default;
+}
+
+/**
+ * Packages that build and typecheck themselves from their own scripts
+ * (`build:esm` / `build:cjs`) and are excluded from the root tsconfig, which
+ * keeps the root program from emitting a second copy of their declarations.
+ */
+const SELF_BUILT_PACKAGES = new Set(['typescript-transform-lit-css']);
+
 export async function main() {
   for (const pkgPath of await globby('packages/*/package.json')) {
-    if (pkgPath.match(/typescript-transform-lit-css/))
+    if ([...SELF_BUILT_PACKAGES].some(name => pkgPath.includes(`/${name}/`)))
       continue;
     const outdir = dirname(pkgPath);
     const pkg = JSON.parse(await readFile(pkgPath, 'utf8'));
-    for (const [type, filename] of Object.entries(pkg.exports)) {
+    const entry = pkg.exports['.'] ?? pkg.exports;
+    for (const type of ['import', 'require']) {
+      const filename = conditionTarget(entry[type]);
+      if (!filename)
+        continue;
       try {
         await esbuild.build({
           bundle: type === 'require',
@@ -78,4 +99,114 @@ export async function main() {
   }
 }
 
-main();
+/**
+ * Packages that do not publish CommonJS declarations yet.
+ *
+ * `@pwrs/vite-plugin-lit-css` re-exports types from Vite, whose `require`
+ * condition resolves to `declare const module: any; export = module`. A plain
+ * copy of its `.d.ts` therefore fails for CommonJS consumers; the follow-up
+ * change that either rewrites that import or imposes a compiler floor removes
+ * this entry.
+ */
+const CJS_TYPES_PENDING = new Set(['@pwrs/vite-plugin-lit-css']);
+
+/**
+ * Emit CommonJS-flavoured declarations (`.d.cts`) alongside the ESM `.d.ts` files.
+ *
+ * TypeScript derives a declaration file's module format from its extension, so
+ * CommonJS consumers resolving the `require` condition need `*.d.cts`. `tsc`
+ * only emits that extension for a `.cts` source, and each package here has a
+ * single ESM source, so the declarations are copied verbatim.
+ *
+ * The copy is sound because the declarations use only syntax that TypeScript
+ * interprets the same way in both formats: named exports and `export default`
+ * (which denotes the `.default` property of the CJS exports object, matching
+ * esbuild's `__esModule` output). `export =` or `declare module` forms would
+ * NOT be copy-safe.
+ *
+ * `filter` scopes the run to one package (by name or directory basename). The
+ * self-built packages call this with their own name so a workspace-scoped
+ * `npm run build -w <pkg>` also emits its `.d.cts`.
+ */
+export async function cjsTypes({ root = dirname(fileURLToPath(import.meta.url)), filter } = {}) {
+  const errors = [];
+  let matched = 0;
+  for (const pkgPath of await globby('packages/*/package.json', { cwd: root, absolute: true })) {
+    const pkg = JSON.parse(await readFile(pkgPath, 'utf8'));
+    if (filter && pkg.name !== filter && basename(dirname(pkgPath)) !== filter)
+      continue;
+    if (CJS_TYPES_PENDING.has(pkg.name))
+      continue;
+    matched++;
+    const entry = pkg.exports?.['.'];
+    const requireCondition = entry?.require;
+    const importCondition = entry?.import;
+    const cjsTypesFile = typeof requireCondition === 'string' ? undefined : requireCondition?.types;
+    const esmTypesFile =
+      (typeof importCondition === 'string' ? undefined : importCondition?.types) ?? pkg.types;
+    const hasCjsBuild =
+      typeof requireCondition === 'string' || conditionTarget(requireCondition) != null;
+
+    if (!cjsTypesFile) {
+      // Packages that expose no CJS build at all are intentionally skipped, but
+      // a CJS build without declarations is a packaging bug.
+      if (hasCjsBuild)
+        errors.push(`${pkg.name}: exports["."].require.types is missing`);
+      continue;
+    }
+
+    if (!esmTypesFile) {
+      errors.push(`${pkg.name}: cannot determine the ESM types path`);
+      continue;
+    }
+
+    const outdir = dirname(pkgPath);
+    const sourcePath = resolve(outdir, esmTypesFile);
+    const targetPath = resolve(outdir, cjsTypesFile);
+    if (sourcePath === targetPath) {
+      errors.push(`${pkg.name}: require.types and import.types resolve to the same file`);
+      continue;
+    }
+    const expectedTarget = sourcePath.replace(/\.d\.ts$/, '.d.cts');
+    if (expectedTarget === sourcePath || targetPath !== expectedTarget) {
+      errors.push(`${pkg.name}: require.types is not the .d.cts twin of import.types`);
+      continue;
+    }
+    let source;
+    try {
+      source = await readFile(sourcePath, 'utf8');
+    } catch (error) {
+      if (error.code !== 'ENOENT')
+        throw error;
+      errors.push(`${pkg.name}: ${esmTypesFile} is missing — run \`npm run build\` first`);
+      continue;
+    }
+    await writeFile(targetPath, source);
+  }
+  if (filter && matched === 0)
+    errors.push(`filter '${filter}' matched no packages (expected a package name or dir)`);
+  return { errors };
+}
+
+async function cli() {
+  const flagIndex = process.argv.indexOf('--cjs-types');
+  if (process.argv.includes('--help') || process.argv.includes('-h')) {
+    // eslint-disable-next-line no-console
+    console.log(`Usage:
+  node build.js                    build runtime bundles with esbuild
+  node build.js --cjs-types [pkg]  copy ESM declarations to CommonJS (*.d.cts)
+                                   pkg: package name or packages/<dir> basename`);
+  } else if (flagIndex !== -1) {
+    const filter = process.argv.slice(flagIndex + 1).find(arg => !arg.startsWith('-'));
+    const { errors } = await cjsTypes(filter ? { filter } : {});
+    for (const error of errors)
+      // eslint-disable-next-line no-console
+      console.error(error);
+    if (errors.length > 0)
+      process.exitCode = 1;
+  } else
+    main();
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href)
+  cli();

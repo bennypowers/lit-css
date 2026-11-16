@@ -6,8 +6,17 @@
   "main": "parcel-transformer-lit-css.js",
   "types": "parcel-transformer-lit-css.d.ts",
   "exports": {
-    "import": "./parcel-transformer-lit-css.js",
-    "require": "./parcel-transformer-lit-css.cjs"
+    ".": {
+      "import": {
+        "types": "./parcel-transformer-lit-css.d.ts",
+        "default": "./parcel-transformer-lit-css.js"
+      },
+      "require": {
+        "types": "./parcel-transformer-lit-css.d.cts",
+        "default": "./parcel-transformer-lit-css.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "engines": {
     "parcel": "^2.0.0"
@@ -31,7 +40,8 @@
   "files": [
     "parcel-transformer-lit-css.cjs",
     "parcel-transformer-lit-css.js",
-    "parcel-transformer-lit-css.d.ts"
+    "parcel-transformer-lit-css.d.ts",
+    "parcel-transformer-lit-css.d.cts"
   ],
   "dependencies": {
     "@pwrs/lit-css": "^4.1.0"

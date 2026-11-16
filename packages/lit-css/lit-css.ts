@@ -1,4 +1,4 @@
-import cssnano, { Options as CssnanoOptions } from 'cssnano';
+import cssnano, { type Options as CssnanoOptions } from 'cssnano';
 
 function stringToTemplateLiteral(x = '') {
   x = `${x}`;
