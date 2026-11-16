@@ -17,3 +17,6 @@ The generated `.d.cts` files now use `export =` with a merged namespace, so
 reachable as `pkg.LitCSSOptions`. A `const` default (webpack loader, Parcel
 transformer) cannot merge with a namespace, so for those two packages only type
 exports are re-exported and `.default` is untyped.
+
+`typescript-transform-lit-css` now keeps `typescript` external in its CommonJS
+bundle, so it runs against the consumer's compiler instead of an embedded copy.

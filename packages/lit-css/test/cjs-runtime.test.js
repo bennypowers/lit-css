@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -9,6 +10,27 @@ import { cjsPackages, EXPECTED } from './cjs-packages.js';
 const require = createRequire(import.meta.url);
 const pkgDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const repoDir = join(pkgDir, '..', '..');
+
+test('CommonJS bundles load peer dependencies instead of embedding them', async t => {
+  const transformer = join(
+    repoDir,
+    'packages',
+    'typescript-transform-lit-css',
+    'typescript-transform-lit-css.cjs',
+  );
+  const source = (await readFile(transformer, 'utf8'));
+
+  t.match(
+    source,
+    /require\(["']typescript["']\)/,
+    'typescript-transform-lit-css requires the consumer typescript',
+  );
+  t.ok(
+    source.length < 1_000_000,
+    `typescript-transform-lit-css bundle stays small (${source.length} bytes)`,
+  );
+  t.end();
+});
 
 test('every package CommonJS entry can be required at runtime', async t => {
   const packages = await cjsPackages(repoDir);

@@ -95,6 +95,10 @@ export async function main({ root = dirname(fileURLToPath(import.meta.url)), fil
             // resolves its own lib files with require.resolve('../lib/*.js'),
             // which cannot work from inside a bundle.
             'minify-html-literals',
+            // The typescript transformer runs inside the consumer's compiler.
+            // Embedding a second compiler breaks AST kind checks and adds
+            // ~10 MB to the bundle.
+            'typescript',
           ] : [],
           entryPoints: [resolve(outdir, pkg.main).replace('.js', '.ts')],
           format: type === 'import' ? 'esm' : 'cjs',
