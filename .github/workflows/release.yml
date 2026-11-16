@@ -23,6 +23,11 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
 
+      # Trusted publishing needs npm 11.5.1 or newer, which is not guaranteed
+      # to be the version bundled with the runner's Node.
+      - name: Update npm
+        run: npm install -g npm@latest
+
       - name: Install packages
         run: npm ci --prefer-offline
 
@@ -31,8 +36,9 @@ jobs:
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          publish: npx changeset publish --provenance
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # npm attaches provenance automatically when publishing through a
+          # trusted publisher. `changeset publish` does not accept --provenance.
+          publish-script: npx changeset publish
+          github-token: ${{ secrets.GITHUB_TOKEN }}
