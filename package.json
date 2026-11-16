@@ -16,7 +16,7 @@
   },
   "scripts": {
     "build": "npm run clean && run-p build:* && npm run cjs-types",
-    "build:typescript": "npm run build -ws --if-present",
+    "build:typescript": "npm run build --workspaces --if-present",
     "build:runtime": "node build.js",
     "build:types": "tsc",
     "cjs-types": "node build.js --cjs-types",
