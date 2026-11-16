@@ -1,43 +1,29 @@
-import { readFile, readdir } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import test from 'tape';
 
+import { cjsPackages, EXPECTED } from './cjs-packages.js';
+
 const require = createRequire(import.meta.url);
 const pkgDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const repoDir = join(pkgDir, '..', '..');
 
-/**
- * Every workspace package that publishes a CommonJS entry point.
- * Reads the manifests directly rather than hardcoding names, so new packages
- * are covered automatically.
- */
-async function cjsPackages() {
-  const packages = [];
-  for (const dirent of await readdir(join(repoDir, 'packages'), { withFileTypes: true })) {
-    if (!dirent.isDirectory())
-      continue;
-    let manifest;
-    try {
-      const manifestPath = join(repoDir, 'packages', dirent.name, 'package.json');
-      manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
-    } catch {
-      continue;
-    }
-    const target = manifest.exports?.['.']?.require?.default;
-    if (target)
-      packages.push({ name: manifest.name, target });
-  }
-  return packages;
-}
-
 test('every package CommonJS entry can be required at runtime', async t => {
-  const packages = await cjsPackages();
+  const packages = await cjsPackages(repoDir);
   t.ok(packages.length > 0, 'found at least one package with a require entry');
+  t.deepEqual(
+    packages.map(({ name }) => name).sort(),
+    Object.keys(EXPECTED).sort(),
+    'every package with a require entry has an expectation',
+  );
 
   for (const { name, target } of packages) {
+    const expected = EXPECTED[name];
+    if (!expected)
+      continue;
+
     let mod;
     try {
       mod = require(name);
@@ -46,8 +32,15 @@ test('every package CommonJS entry can be required at runtime', async t => {
       continue;
     }
 
-    t.equal(typeof mod, 'object', `${name}: require returns a module object`);
-    t.ok(Object.keys(mod).length > 0, `${name}: exposes at least one export`);
+    if (expected.named)
+      t.equal(typeof mod[expected.named], 'function', `${name}: exposes ${expected.named}()`);
+    else if (expected.callable) {
+      t.equal(typeof mod, 'function', `${name}: require() returns the factory`);
+      t.equal(mod.default, mod, `${name}: default points back at the factory`);
+    } else if (expected.value) {
+      t.ok(Symbol.for('parcel-plugin-config') in mod, `${name}: require() returns the transformer`);
+      t.equal(mod.default, mod, `${name}: default points back at the transformer`);
+    }
   }
   t.end();
 });

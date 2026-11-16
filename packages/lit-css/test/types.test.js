@@ -5,10 +5,30 @@ import { fileURLToPath } from 'node:url';
 import { execa } from 'execa';
 import test from 'tape';
 
+import { EXPECTED } from './cjs-packages.js';
+
 const pkgDir = join(dirname(fileURLToPath(import.meta.url)), '..');
 const repoDir = join(pkgDir, '..', '..');
 const tsc = join(repoDir, 'node_modules', '.bin', 'tsc');
 const CONSUMER_MANIFEST = JSON.stringify({ name: 'consumer', type: 'commonjs', private: true });
+
+/**
+ * TypeScript statements that exercise the package's CommonJS entry the way its
+ * consumers do. Fails to compile when `require()` is not callable or when a
+ * named export is unreachable.
+ * @param {string} name package name
+ * @return {string} statements placed after `import pkg = require(name)`
+ */
+function cjsUsage(name) {
+  const expected = EXPECTED[name];
+  if (expected?.callable) {
+    return /* ts */`
+      const factory: (...args: any[]) => unknown = pkg;
+      void factory;
+    `;
+  }
+  return 'void pkg;';
+}
 
 /**
  * Creates a throwaway consumer project whose node_modules/<name>
@@ -118,7 +138,7 @@ test('every package publishes compilable CommonJS types', async t => {
       await linkPackage(dir, packageDir, name);
       await writeFile(join(dir, `${safeName}.ts`), /* ts */`
         import pkg = require(${JSON.stringify(name)});
-        void pkg;
+        ${cjsUsage(name)}
       `);
 
       const result = await typecheckWith(dir, `cjs-${safeName}`, {
