@@ -1,4 +1,3 @@
-/* eslint-disable easy-loops/easy-loops */
 import esbuild from 'esbuild';
 import { globby } from 'globby';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -92,8 +91,10 @@ export async function main() {
           platform: 'node',
           plugins: [nativeNodeModulesPlugin],
         });
-      } catch (e) {
-        process.exit(1);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error(error);
+        process.exitCode = 1;
       }
     }
   }

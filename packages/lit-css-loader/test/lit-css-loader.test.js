@@ -16,7 +16,7 @@ run({
       return source;
     } catch (e) {
       const [{ message }] = e;
-      throw new Error(message);
+      throw new Error(message, { cause: e });
     }
   },
 });

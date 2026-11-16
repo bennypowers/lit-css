@@ -184,7 +184,6 @@ export function litCssPlugin(options?: LitCSSOptions): Plugin {
           const sorted = [...cssImports].sort((a, b) => b.ss - a.ss);
 
           let anyRewritten = false;
-          // eslint-disable-next-line easy-loops/easy-loops
           for (const imp of sorted) {
             ({ contents, changed: anyRewritten } = await replaceImport(
               imp, contents, args.path,

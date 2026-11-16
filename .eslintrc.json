@@ -1,9 +1,0 @@
-{
-  "extends": "@pwrs",
-  "env": { "node": true },
-  "parserOptions": {"ecmaVersion":2021},
-  "rules": {
-    "no-invalid-this": "off",
-    "valid-jsdoc": "off"
-  }
-}

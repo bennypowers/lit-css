@@ -1,5 +1,8 @@
 {
-  "include": [".", "../declaration.d.ts"],
+  "include": [
+    ".",
+    "../declaration.d.ts"
+  ],
   "compilerOptions": {
     "outDir": "../../TSPC_OUTPUT/cssnano",
     "module": "NodeNext",
@@ -9,6 +12,7 @@
         "inline": true,
         "cssnano": true
       }
-    ]
+    ],
+    "types": []
   }
 }

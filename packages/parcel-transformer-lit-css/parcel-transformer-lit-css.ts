@@ -3,7 +3,7 @@ import type { Options } from '@pwrs/lit-css';
 
 import { transform } from '@pwrs/lit-css';
 
-export type LitCSSOptions = Omit<Options, 'css'>
+export type LitCSSOptions = Omit<Options, 'css'>;
 
 export default new Transformer({
   async loadConfig({ config }) {
@@ -27,7 +27,7 @@ export default new Transformer({
 
       return [asset];
     } catch (error) {
-      throw new Error(error?.message ?? String(error));
+      throw new Error(error?.message ?? String(error), { cause: error });
     }
   },
 });
