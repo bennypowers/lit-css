@@ -144,6 +144,35 @@ test('every package publishes compilable CommonJS types', async t => {
   t.end();
 });
 
+/**
+ * Read the file list out of `npm pack --json` output.
+ * npm <= 11 prints an array of pack results; npm >= 12 prints an object keyed
+ * by package name. Accept both so the check works on any npm the runner has.
+ * @param {string} output raw stdout from `npm pack --dry-run --json`
+ * @return {Array<{path: string}>} packed file entries
+ */
+function packedFiles(output) {
+  const parsed = JSON.parse(output);
+  const results = Array.isArray(parsed) ? parsed : Object.values(parsed);
+  if (results.length !== 1 || !Array.isArray(results[0]?.files))
+    throw new Error(`unexpected npm pack --json shape: ${output}`);
+  return results[0].files;
+}
+
+test('packedFiles() accepts both npm pack --json output shapes', async t => {
+  const files = [{ path: 'package.json', size: 1, mode: 420 }];
+  const result = { name: 'pkg', files };
+  t.deepEqual(packedFiles(JSON.stringify([result])), files, 'npm <= 11 array shape');
+  t.deepEqual(packedFiles(JSON.stringify({ pkg: result })), files, 'npm >= 12 object shape');
+  t.throws(() => packedFiles(JSON.stringify({})), /unexpected npm pack/, 'rejects empty object');
+  t.throws(
+    () => packedFiles(JSON.stringify([{ name: 'pkg' }])),
+    /unexpected npm pack/,
+    'rejects result without files',
+  );
+  t.end();
+});
+
 test('every package tarball contains its CommonJS types', async t => {
   for (const { dir, name, types } of await publishedPackages()) {
     const result = await execa('npm', ['pack', '--dry-run', '--json'], { cwd: dir, reject: false });
@@ -155,7 +184,7 @@ test('every package tarball contains its CommonJS types', async t => {
 
     let files;
     try {
-      [{ files }] = JSON.parse(result.stdout);
+      files = packedFiles(result.stdout);
     } catch {
       t.fail(`${name}: could not parse npm pack output: ${result.stdout}`);
       continue;

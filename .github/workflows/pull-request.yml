@@ -11,11 +11,16 @@ jobs:
     if: github.repository == 'bennypowers/lit-css'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
+
+      # Release installs npm@latest before testing and publishing, so test with
+      # the same npm here to catch version drift before it reaches main.
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - name: Install packages
         run: npm ci --prefer-offline
