@@ -82,6 +82,10 @@ export async function main() {
             'postcss-*',
             'node:*',
             '@pwrs/lit-css',
+            // Bundling this drags uglify-js into the output, and uglify-js
+            // resolves its own lib files with require.resolve('../lib/*.js'),
+            // which cannot work from inside a bundle.
+            'minify-html-literals',
           ] : [],
           entryPoints: [resolve(outdir, pkg.main).replace('.js', '.ts')],
           format: type === 'import' ? 'esm' : 'cjs',
