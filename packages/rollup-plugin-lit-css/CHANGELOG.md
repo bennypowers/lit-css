@@ -1,5 +1,23 @@
 # rollup-plugin-lit-css
 
+## 6.0.3
+
+### Patch Changes
+
+- 7c3a368: Make CommonJS entries expose their default export directly, so
+  `const plugin = require('@pwrs/vite-plugin-lit-css')` is the plugin factory
+  instead of `{ default, ... }`. Named exports and `default` stay attached, so
+  existing `require('pkg').default` code keeps working at runtime.
+  
+  The generated `.d.cts` files now use `export =` with a merged namespace, so
+  `import pkg = require('pkg')` is callable and typed, while named types remain
+  reachable as `pkg.LitCSSOptions`. A `const` default (webpack loader, Parcel
+  transformer) cannot merge with a namespace, so for those two packages only type
+  exports are re-exported and `.default` is untyped.
+  
+  `typescript-transform-lit-css` now keeps `typescript` external in its CommonJS
+  bundle, so it runs against the consumer's compiler instead of an embedded copy.
+
 ## 6.0.2
 
 ### Patch Changes

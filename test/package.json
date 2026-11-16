@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "esbuild-plugin-lit-css": "4.1.2",
-    "lit-css-loader": "4.0.2",
-    "rollup-plugin-lit-css": "6.0.2"
+    "lit-css-loader": "4.0.3",
+    "rollup-plugin-lit-css": "6.0.3"
   }
 }
