@@ -38,5 +38,7 @@ jobs:
         id: changesets
         uses: changesets/action@v2
         with:
-          publish-script: npx changeset publish --provenance
+          # npm attaches provenance automatically when publishing through a
+          # trusted publisher. `changeset publish` does not accept --provenance.
+          publish-script: npx changeset publish
           github-token: ${{ secrets.GITHUB_TOKEN }}
