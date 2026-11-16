@@ -1,5 +1,21 @@
 # @pwrs/lit-css
 
+## 5.0.0
+
+### Major Changes
+
+- a44ec4c: `Meta.filePath` is now optional, matching the optional `Options.filePath` that is passed to `transform` callbacks at runtime.
+
+  Strict implementations of `Options.transform` that read `meta.filePath` as a `string` now need to handle `undefined`. This is a type-level break, hence the major release.
+
+### Patch Changes
+
+- fa515eb: Add `types` conditions to the exports maps and ship CommonJS declarations (`*.d.cts`).
+
+  CommonJS TypeScript consumers (e.g. `module: "node16"` or `"nodenext"` in a `"type": "commonjs"` project) resolve the `require` condition and then look for a declaration file with a CommonJS extension. Without one, importing a package failed with TS7016 "Could not find a declaration file for module ...".
+
+  `@pwrs/vite-plugin-lit-css` is not included yet: its declarations re-export types from Vite, whose `require` condition resolves to `declare const module: any; export = module`, so a plain copy cannot work. That package follows in a separate change.
+
 ## 4.1.0
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # esbuild-plugin-minify-html-literals
 
+## 3.0.1
+
+### Patch Changes
+
+- fa515eb: Add `types` conditions to the exports maps and ship CommonJS declarations (`*.d.cts`).
+
+  CommonJS TypeScript consumers (e.g. `module: "node16"` or `"nodenext"` in a `"type": "commonjs"` project) resolve the `require` condition and then look for a declaration file with a CommonJS extension. Without one, importing a package failed with TS7016 "Could not find a declaration file for module ...".
+
+  `@pwrs/vite-plugin-lit-css` is not included yet: its declarations re-export types from Vite, whose `require` condition resolves to `declare const module: any; export = module`, so a plain copy cannot work. That package follows in a separate change.
+
 ## 3.0.0
 
 ### Major Changes
