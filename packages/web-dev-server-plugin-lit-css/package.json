@@ -1,7 +1,7 @@
 {
   "name": "web-dev-server-plugin-lit-css",
   "description": "Import CSS files as tagged template literals",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "type": "module",
   "main": "web-dev-server-plugin-lit-css.js",
   "types": "web-dev-server-plugin-lit-css.d.ts",
@@ -41,7 +41,7 @@
     "web-dev-server-plugin-lit-css.d.cts"
   ],
   "dependencies": {
-    "@pwrs/lit-css": "^4.0.0",
+    "@pwrs/lit-css": "^5.0.0",
     "@rollup/pluginutils": "^5.1.4"
   }
 }
