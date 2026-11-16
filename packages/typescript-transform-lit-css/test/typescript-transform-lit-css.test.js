@@ -8,6 +8,11 @@ import { $ } from 'execa';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// The fixture compiles with the project's locked caniuse-lite data. Once that
+// data is old enough, browserslist prints a notice and tspc exits non-zero, so
+// keep the fixture independent of how stale the lockfile's data is.
+process.env.BROWSERSLIST_IGNORE_OLD_DATA = '1';
+
 const FIXTURES_DIR = join(__dirname, 'fixtures');
 const EXPECTED_DIR = join(__dirname, 'expected');
 const OUTPUT_DIR = join(__dirname, 'TSPC_OUTPUT');
@@ -22,7 +27,7 @@ const compile = async dir => {
   try {
     await $`npx tspc -p ${dir}`;
   } catch (error) {
-    throw new Error(`TS ERROR: ${error.stderr || error.message}`);
+    throw new Error(`TS ERROR: ${error.stderr || error.message}`, { cause: error });
   }
 };
 

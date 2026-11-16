@@ -7,7 +7,7 @@
   "author": "Benny Powers <web@bennypowers.com>",
   "license": "MIT",
   "engines": {
-    "node": ">= 22.0.0",
+    "node": "^22.13.0 || >= 24",
     "npm": ">= 10.0.0"
   },
   "repository": {
@@ -23,7 +23,7 @@
     "lint": "eslint .",
     "test": "npm run build && tape 'packages/*/test/*.test.js' | tap-spec",
     "release": "npm run build && npm run test && npx changeset publish",
-    "clean": "rimraf 'packages/*/*.{cjs,js,d.ts,d.cts,js.map,cjs.map}'",
+    "clean": "rimraf --glob 'packages/*/*.{cjs,js,d.ts,d.cts,js.map,cjs.map}'",
     "postinstall": "node scripts/setup-mock-packages.js"
   },
   "workspaces": [
@@ -39,7 +39,7 @@
     "@parcel/core": "^2.16.0",
     "@parcel/plugin": "^2.16.0",
     "@parcel/transformer-sass": "^2.16.0",
-    "@pwrs/eslint-config": "^0.0.26",
+    "@pwrs/eslint-config": "^1.0.0",
     "@rollup/plugin-alias": "^5.1.1",
     "@types/node": "^22.15.18",
     "@web/dev-server-core": "^0.7.5",
@@ -48,8 +48,10 @@
     "cz-conventional-changelog": "^3.3.0",
     "esbuild": "^0.25.4",
     "esbuild-plugin-alias": "^0.2.1",
+    "eslint": "^10.15.0",
     "esm": "^3.2.25",
     "execa": "^9.5.3",
+    "globals": "^16.5.0",
     "globby": "^14.1.0",
     "lit": "^3.3.0",
     "memfs": "^4.17.1",
@@ -57,6 +59,7 @@
     "npm-run-all": "^4.1.5",
     "postcss": "^8.5.3",
     "postcss-nesting": "^13.0.1",
+    "rimraf": "^6.1.4",
     "rollup": "^4.40.2",
     "rollup-plugin-alias": "^2.2.0",
     "sass": "^1.88.0",
@@ -65,7 +68,6 @@
     "tape": "^5.9.0",
     "ts-patch": "^3.3.0",
     "typescript": "^5.8.3",
-    "webpack": "^5.99.8",
-    "wsrun": "^5.2.4"
+    "webpack": "^5.112.2"
   }
 }

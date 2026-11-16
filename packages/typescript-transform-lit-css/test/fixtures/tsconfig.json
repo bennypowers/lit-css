@@ -1,6 +1,10 @@
 {
-  "include": ["."],
-  "exclude": ["cssnano"],
+  "include": [
+    "."
+  ],
+  "exclude": [
+    "cssnano"
+  ],
   "compilerOptions": {
     "outDir": "../TSPC_OUTPUT",
     "module": "NodeNext",
@@ -10,6 +14,7 @@
         "inline": true,
         "cssnano": false
       }
-    ]
+    ],
+    "types": []
   }
 }

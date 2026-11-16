@@ -10,13 +10,13 @@ import cssnanoPresetDefault from 'cssnano-preset-default';
 
 import ts, { ImportDeclaration, SourceFile } from 'typescript';
 
-export interface LitCSSOptions extends Pick<Options, 'specifier'|'filePath'|'tag'> {
+export interface LitCSSOptions extends Pick<Options, 'specifier' | 'filePath' | 'tag'> {
   filter: string;
   cssnano: boolean;
   inline: boolean;
 }
 
-const isPlugin = (x: PostCSSPlugin|PostCSSProcessor): x is PostCSSPlugin => 'postcssPlugin' in x;
+const isPlugin = (x: PostCSSPlugin | PostCSSProcessor): x is PostCSSPlugin => 'postcssPlugin' in x;
 
 const cssnanoPreset = cssnanoPresetDefault();
 
@@ -41,12 +41,10 @@ function createLitCssImportStatement(
   if (SEEN_SOURCES.has(sourceFile))
     return;
 
-  // eslint-disable-next-line easy-loops/easy-loops
   for (const statement of sourceFile.statements) {
     if (
       ts.isImportDeclaration(statement) &&
       statement.moduleSpecifier.getText() === specifier) {
-      // eslint-disable-next-line easy-loops/easy-loops
       for (const binding of statement.importClause?.namedBindings?.getChildren() ?? []) {
         if (binding.getText() === tag) {
           SEEN_SOURCES.add(sourceFile);
@@ -216,13 +214,11 @@ export default function(
   const tag = pluginConfig.tag ?? 'css';
   return (ctx: ts.TransformationContext) => {
     function visitor(node: ts.Node) {
-      /* eslint-disable operator-linebreak */
-      if (!ts.isTypeOnlyImportOrExportDeclaration(node)
-        && (ts.isImportDeclaration(node) || ts.isExportDeclaration(node))
+      if (!ts.isTypeOnlyImportOrExportDeclaration(node) &&
+        (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
         // TODO: handle cases like `import { style as foo } from './x.css'; export { foo as bar };`
-        && node.moduleSpecifier
+        node.moduleSpecifier
       ) {
-      /* eslint-enable operator-linebreak */
         const importedStyleSheetSpecifier =
           node.moduleSpecifier.getText().replace(/^'(.*)'$/, '$1');
         if (importedStyleSheetSpecifier.endsWith('.css')) {

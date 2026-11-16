@@ -38,17 +38,17 @@ export interface Options {
    * Whether to minify the CSS using cssnano. can also be an object of css nano options.
    * @default false
    */
-  cssnano?: boolean|CssnanoOptions;
+  cssnano?: boolean | CssnanoOptions;
   /**
    * Transform sources using tools like sass or postcss
    * @param  source         Source file contents e.g. scss or postcss sources
    * @param  meta           Source file absolute (i.e. resolved) path
    * @return                Transformed, standard CSS
    */
-  transform?(source: string, meta: Meta): string|Promise<string>;
+  transform?(source: string, meta: Meta): string | Promise<string>;
 }
 
-async function cssnanoify(css: string, options: boolean|CssnanoOptions) {
+async function cssnanoify(css: string, options: boolean | CssnanoOptions) {
   const cssnanoOptions = typeof options === 'object' ? options : undefined;
   const result = await cssnano(cssnanoOptions).process(css);
   return result.css;
